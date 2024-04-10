@@ -1,0 +1,18 @@
+spring:
+  application:
+    name: SkyWingsExpress-Server
+  datasource:
+    url: jdbc:postgresql://localhost:5432/${db_name}
+    username: ${db_username}
+    password: ${db_password}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update
+
+
+jwt:
+  token:
+    secret: ${jwt_token_secret}
+    lifetime: ${jwt_token_lifetime}
