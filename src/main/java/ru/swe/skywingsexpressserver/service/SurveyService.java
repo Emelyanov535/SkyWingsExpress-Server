@@ -1,5 +1,4 @@
 package ru.swe.skywingsexpressserver.service;
-
 import org.springframework.stereotype.Service;
 import ru.swe.skywingsexpressserver.repository.survey.SurveyRepository;
 

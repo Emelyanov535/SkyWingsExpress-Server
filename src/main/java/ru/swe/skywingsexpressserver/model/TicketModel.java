@@ -13,6 +13,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.swe.skywingsexpressserver.model.operator.FlightModel;
 
+import java.math.BigDecimal;
+
 @Data
 @Entity
 @Builder
@@ -28,6 +30,7 @@ public class TicketModel {
     @JoinColumn(name="flight_id", nullable = false)
     private FlightModel flight;
     @ManyToOne
-    @JoinColumn(name="owner_id", nullable = false)
+    @JoinColumn(name="owner_id")
     private UserModel owner;
+    private BigDecimal finalPrice;
 }

@@ -1,5 +1,4 @@
 package ru.swe.skywingsexpressserver.model.survey.question;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;

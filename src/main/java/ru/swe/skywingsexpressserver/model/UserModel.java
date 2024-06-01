@@ -34,6 +34,14 @@ public class UserModel {
     private String email;
     @NotBlank(message = "Password may not be null or empty!")
     private String password;
+    @NotBlank(message = "Name may not be null or empty!")
+    private String name;
+    @NotBlank(message = "Surname may not be null or empty!")
+    private String surname;
+    @Builder.Default
+    private Boolean sendNotifications = true;
+    @Builder.Default
+    private Boolean twoFactor = false;
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
         name = "t_user_role",

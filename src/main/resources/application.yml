@@ -2,15 +2,17 @@ spring:
   application:
     name: SkyWingsExpress-Server
   datasource:
-    url: jdbc:postgresql://localhost:5432/${db_name}
-    username: ${db_username}
-    password: ${db_password}
+    url: jdbc:postgresql://localhost:5432/${DB_NAME}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
       ddl-auto: update
-
+  output:
+    ansi:
+      enabled: always
 
 jwt:
   token:

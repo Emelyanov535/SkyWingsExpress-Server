@@ -1,5 +1,4 @@
 package ru.swe.skywingsexpressserver.controller;
-
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.swe.skywingsexpressserver.service.SurveyService;

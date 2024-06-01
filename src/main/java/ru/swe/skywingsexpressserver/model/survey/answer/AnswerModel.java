@@ -1,5 +1,4 @@
 package ru.swe.skywingsexpressserver.model.survey.answer;
-
 import jakarta.persistence.DiscriminatorColumn;
 import jakarta.persistence.DiscriminatorType;
 import jakarta.persistence.Entity;

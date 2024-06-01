@@ -12,6 +12,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
 @Data
 @Entity
 @Builder
@@ -26,9 +29,10 @@ public class FlightModel {
     @ManyToOne
     @JoinColumn(name="route_id", nullable = false)
     private RouteModel route;
-    @ManyToOne
-    @JoinColumn(name="schedule_id", nullable = false)
-    private ScheduleModel schedule;
+    private LocalDateTime departureTime;
+    private LocalDateTime arrivalTime;
+    private Integer totalSeats;
     private Integer availableSeats;
-    private Double ticketPrice;
+    private BigDecimal ticketPrice;
+    private Double discountPercentage;
 }
