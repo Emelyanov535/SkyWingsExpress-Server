@@ -13,6 +13,21 @@ spring:
   output:
     ansi:
       enabled: always
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8080/realms/swe_server
+      client:
+        provider:
+          keycloak:
+            issuer-uri: http://localhost:8080/realms/swe_server
+            user-name-attribute: preferred_username
+        registration:
+          keycloak:
+            client-id: reg_client
+            client-secret: kDjhKVBZwFcm6et4qJCDN0cXDJUpClQZ
+            scope: openid
 
 server:
   port: 8081
