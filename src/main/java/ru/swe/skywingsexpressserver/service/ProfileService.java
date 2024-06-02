@@ -49,7 +49,7 @@ public class ProfileService {
     public void editNotificationSettings(Long id,
                                          EditNotificationSettingsDto notificationSettings) {
         var user = getUserModel(id);
-        user.setSendNotifications(notificationSettings.sendNotifications());
+//        user.setSendNotifications(notificationSettings.sendNotifications());
         userRepository.save(user);
     }
 
