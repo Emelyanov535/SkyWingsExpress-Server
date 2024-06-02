@@ -1,11 +1,13 @@
 package ru.swe.skywingsexpressserver.service;
 
 import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.keycloak.representations.idm.CredentialRepresentation;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import ru.swe.skywingsexpressserver.configuration.KeycloakData;
 import ru.swe.skywingsexpressserver.dto.SignUpDto;
 import ru.swe.skywingsexpressserver.model.UserModel;
 import ru.swe.skywingsexpressserver.repository.UserRepository;
@@ -14,18 +16,13 @@ import ru.swe.skywingsexpressserver.utils.DtoModelMapper;
 import java.util.List;
 
 @Service
+@AllArgsConstructor
 public class SignInService {
     private final UserRepository userRepository;
     private final Keycloak keycloak;
     private final DtoModelMapper mapper;
     private final PasswordEncoder passwordEncoder;
-
-    public SignInService(UserRepository userRepository, Keycloak keycloak, DtoModelMapper mapper, PasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;
-        this.keycloak = keycloak;
-        this.mapper = mapper;
-        this.passwordEncoder = passwordEncoder;
-    }
+    private final KeycloakData keycloakData;
 
     @Transactional
     public void Registration(SignUpDto data){
@@ -38,7 +35,7 @@ public class SignInService {
         credentialRepresentation.setValue(data.password());
         userRepresentation.setCredentials(List.of(credentialRepresentation));
         userRepresentation.setEnabled(true);
-        keycloak.realm("swe_server").users().create(userRepresentation);
+        keycloak.realm(keycloakData.getRealm()).users().create(userRepresentation);
     }
 }
 
