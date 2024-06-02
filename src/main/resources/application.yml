@@ -25,14 +25,15 @@ spring:
             user-name-attribute: preferred_username
         registration:
           keycloak:
-            client-id: reg_client
-            client-secret: kDjhKVBZwFcm6et4qJCDN0cXDJUpClQZ
+            client-id: ${KEYCLOAK_CLIENT_ID}
+            client-secret: k${KEYCLOAK_CLIENT_SECRET}
             scope: openid
+
+keycloak:
+  url: ${KEYCLOAK_URL}
+  realm: ${KEYCLOAK_REALM_ID}
+  client: ${KEYCLOAK_CLIENT_ID}
+  client_secret: ${KEYCLOAK_CLIENT_SECRET}
 
 server:
   port: 8081
-
-jwt:
-  token:
-    secret: ${jwt_token_secret}
-    lifetime: ${jwt_token_lifetime}
