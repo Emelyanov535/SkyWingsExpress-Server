@@ -6,6 +6,7 @@ import org.keycloak.representations.idm.UserRepresentation;
 import org.keycloak.representations.idm.CredentialRepresentation;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import ru.swe.skywingsexpressserver.dto.SignInDto;
 import ru.swe.skywingsexpressserver.dto.SignUpDto;
 import ru.swe.skywingsexpressserver.model.UserModel;
 import ru.swe.skywingsexpressserver.repository.UserRepository;
@@ -39,6 +40,11 @@ public class SignInService {
         userRepresentation.setCredentials(List.of(credentialRepresentation));
         userRepresentation.setEnabled(true);
         keycloak.realm("swe_server").users().create(userRepresentation);
+    }
+
+    @Transactional
+    public String Authorization(SignInDto data){
+
     }
 }
 
