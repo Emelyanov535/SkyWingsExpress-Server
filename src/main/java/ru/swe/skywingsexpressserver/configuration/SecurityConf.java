@@ -16,11 +16,17 @@ public class SecurityConf {
     }
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity.oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()));
         return httpSecurity
                 .csrf(CsrfConfigurer::disable)
-                .authorizeHttpRequests(c -> c.anyRequest()
-                        .permitAll())
+                .authorizeHttpRequests(c -> c
+                        .requestMatchers("/api/**").authenticated()
+                        .anyRequest().permitAll()
+                )
+                .oauth2Login(oauth2 -> oauth2
+                        .defaultSuccessUrl("/login-success")
+                        .failureUrl("/login-failure")
+                )
+                .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))
                 .build();
     }
 }
