@@ -15,8 +15,8 @@ public class FlightFilterService {
 
     private final FlightRepository flightRepository;
 
-    public List<FlightModel> getFlightsByRouteAndDates(String origin, String destination, LocalDateTime startDate, LocalDateTime endDate) {
-        return flightRepository.findByRouteOriginAndRouteDestinationAndDepartureTimeBetween(origin, destination, startDate, endDate);
+    public List<FlightModel> getFlightsByRouteAndDate(String origin, String destination, LocalDateTime startDate) {
+        return flightRepository.findByRouteOriginAndRouteDestinationAndDepartureTime(origin, destination, startDate);
     }
 
     public List<FlightModel> getFlightsByRoute(String origin, String destination) {
@@ -35,8 +35,8 @@ public class FlightFilterService {
         List<List<FlightModel>> connectingFlights = new ArrayList<>();
 
         for (FlightModel firstLeg : firstLegFlights) {
-            List<FlightModel> secondLegFlights = flightRepository.findByRouteOriginAndRouteDestinationAndDepartureTimeBetween(
-                    firstLeg.getRoute().getDestination(), destination, firstLeg.getArrivalTime(), endDate);
+            List<FlightModel> secondLegFlights = flightRepository.findByRouteOriginAndRouteDestinationAndDepartureTime(
+                    firstLeg.getRoute().getDestination(), destination, firstLeg.getArrivalTime());
 
             for (FlightModel secondLeg : secondLegFlights) {
                 List<FlightModel> connection = new ArrayList<>();

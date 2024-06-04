@@ -29,7 +29,7 @@ public class SecurityConf {
         return httpSecurity
                 .csrf(CsrfConfigurer::disable)
                 .authorizeHttpRequests(c -> c
-                        .requestMatchers("/api/**").authenticated()
+                        //.requestMatchers("/api/**").authenticated()
                         .anyRequest().permitAll()
                 )
                 .oauth2Login(oauth2 -> oauth2

@@ -11,6 +11,7 @@ import ru.swe.skywingsexpressserver.model.operator.FlightModel;
 import ru.swe.skywingsexpressserver.service.FlightFilterService;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @RestController
@@ -18,15 +19,16 @@ import java.util.List;
 @RequestMapping("/api/v1/flights")
 public class FlightFilterController {
 
-    private FlightFilterService flightService;
+    private final FlightFilterService flightService;
+    private final DateTimeFormatter formatter;
+
     @GetMapping("/search")
-    public ResponseEntity<List<FlightModel>> searchFlights(
+    public ResponseEntity<Object> searchFlights(
             @RequestParam String origin,
             @RequestParam String destination,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate) {
-        List<FlightModel> flights = flightService.getFlightsByRouteAndDates(origin, destination, startDate, endDate);
-        return ResponseEntity.ok(flights);
+            @RequestParam String startDate) {
+        return ResponseEntity.ok(flightService.getFlightsByRouteAndDate(origin, destination,
+                LocalDateTime.parse(startDate, formatter)));
     }
 
     @GetMapping("/by-route")
