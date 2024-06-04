@@ -32,6 +32,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
     implementation 'org.keycloak:keycloak-admin-client:24.0.4'
+    implementation 'org.keycloak:keycloak-spring-boot-starter:15.0.2'
 }
 
 tasks.named('test') {
