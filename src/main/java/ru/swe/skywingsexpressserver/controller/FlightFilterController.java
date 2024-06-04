@@ -31,24 +31,8 @@ public class FlightFilterController {
                 LocalDateTime.parse(startDate, formatter)));
     }
 
-    @GetMapping("/by-route")
-    public ResponseEntity<List<FlightModel>> getFlightsByRoute(
-            @RequestParam String origin,
-            @RequestParam String destination) {
-        List<FlightModel> flights = flightService.getFlightsByRoute(origin, destination);
-        return ResponseEntity.ok(flights);
-    }
-
-    @GetMapping("/by-dates")
-    public ResponseEntity<List<FlightModel>> getFlightsByDates(
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate) {
-        List<FlightModel> flights = flightService.getFlightsByDates(startDate, endDate);
-        return ResponseEntity.ok(flights);
-    }
-
     @GetMapping("/sorted-by-price")
-    public ResponseEntity<List<FlightModel>> getFlightsSortedByPrice() {
+    public ResponseEntity<Object> getFlightsSortedByPrice() {
         List<FlightModel> flights = flightService.getFlightsSortedByPrice();
         return ResponseEntity.ok(flights);
     }
