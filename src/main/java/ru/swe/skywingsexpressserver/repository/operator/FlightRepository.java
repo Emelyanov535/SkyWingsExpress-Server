@@ -10,7 +10,5 @@ public interface FlightRepository
     List<FlightModel> findByRouteOriginAndRouteDestinationAndDepartureTime(String origin, String destination, LocalDateTime startDate);
     List<FlightModel> findByRouteOriginAndDepartureTimeBetween(String origin, LocalDateTime startDate, LocalDateTime endDate);
     List<FlightModel> findByRouteDestinationAndDepartureTimeBetween(String destination, LocalDateTime startDate, LocalDateTime endDate);
-    List<FlightModel> findByRouteOriginAndRouteDestination(String origin, String destination);
-    List<FlightModel> findByDepartureTimeBetween(LocalDateTime startDate, LocalDateTime endDate);
     List<FlightModel> findByOrderByTicketPriceAsc();
 }

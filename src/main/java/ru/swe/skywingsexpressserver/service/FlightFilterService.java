@@ -19,14 +19,6 @@ public class FlightFilterService {
         return flightRepository.findByRouteOriginAndRouteDestinationAndDepartureTime(origin, destination, startDate);
     }
 
-    public List<FlightModel> getFlightsByRoute(String origin, String destination) {
-        return flightRepository.findByRouteOriginAndRouteDestination(origin, destination);
-    }
-
-    public List<FlightModel> getFlightsByDates(LocalDateTime startDate, LocalDateTime endDate) {
-        return flightRepository.findByDepartureTimeBetween(startDate, endDate);
-    }
-
     public List<FlightModel> getFlightsSortedByPrice() {
         return flightRepository.findByOrderByTicketPriceAsc();
     }
