@@ -11,6 +11,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.swe.skywingsexpressserver.model.AirlineModel;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -29,6 +30,9 @@ public class FlightModel {
     @ManyToOne
     @JoinColumn(name="route_id", nullable = false)
     private RouteModel route;
+    @ManyToOne
+    @JoinColumn(name="airline_id", nullable = false)
+    private AirlineModel airline;
     private LocalDateTime departureTime;
     private LocalDateTime arrivalTime;
     private Integer totalSeats;
