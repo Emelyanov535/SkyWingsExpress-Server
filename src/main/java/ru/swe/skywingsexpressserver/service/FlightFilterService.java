@@ -9,6 +9,7 @@ import ru.swe.skywingsexpressserver.utils.DtoModelMapper;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -19,6 +20,13 @@ public class FlightFilterService {
     private final FlightRepository flightRepository;
     private final DtoModelMapper mapper;
 
+    public List<FlightDto> getAllFlights(){
+        var flights = flightRepository.findAll();
+        return flights.stream()
+                .map(flight -> mapper.transform(flight, FlightDto.class))
+                .collect(Collectors.toList());
+    }
+
     public List<FlightDto> getFlightsByRouteAndDate(String origin, String destination, LocalDateTime startDate) {
         var flights = flightRepository.findByRouteOriginAndRouteDestinationAndDepartureTime(origin, destination, startDate);
         return flights.stream()
@@ -26,9 +34,14 @@ public class FlightFilterService {
                 .collect(Collectors.toList());
     }
 
-    public List<FlightModel> getFlightsSortedByPrice() {
-        return flightRepository.findByOrderByTicketPriceAsc();
+    public List<FlightDto> getFlightsSortedByPrice(String origin, String destination, LocalDateTime startDate) {
+        var flights = flightRepository.findByRouteOriginAndRouteDestinationAndDepartureTime(origin, destination, startDate);
+        return flights.stream()
+                .map(flight -> mapper.transform(flight, FlightDto.class))
+                .sorted(Comparator.comparing(FlightDto::ticketPrice))  // Добавлена сортировка по цене
+                .collect(Collectors.toList());
     }
+
     public List<List<FlightModel>> getConnectingFlights(String origin, String destination, LocalDateTime startDate, LocalDateTime endDate) {
         List<FlightModel> firstLegFlights = flightRepository.findByRouteOriginAndDepartureTimeBetween(origin, startDate, endDate);
         List<List<FlightModel>> connectingFlights = new ArrayList<>();

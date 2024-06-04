@@ -32,9 +32,12 @@ public class FlightFilterController {
     }
 
     @GetMapping("/sorted-by-price")
-    public ResponseEntity<Object> getFlightsSortedByPrice() {
-        List<FlightModel> flights = flightService.getFlightsSortedByPrice();
-        return ResponseEntity.ok(flights);
+    public ResponseEntity<Object> getFlightsSortedByPrice(
+            @RequestParam String origin,
+            @RequestParam String destination,
+            @RequestParam String startDate) {
+        return ResponseEntity.ok(flightService.getFlightsSortedByPrice(origin, destination,
+                LocalDateTime.parse(startDate, formatter)));
     }
 
     @GetMapping("/connecting-flights")
