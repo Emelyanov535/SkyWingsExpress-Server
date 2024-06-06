@@ -1,69 +1,63 @@
 package ru.swe.skywingsexpressserver.dto.flight;
+
 import ru.swe.skywingsexpressserver.dto.AirlineDto;
 import ru.swe.skywingsexpressserver.dto.route.RouteDto;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-public record FlightDto(
-    Long id,
-    String flightNumber,
-    RouteDto route,
-    AirlineDto airline,
-    LocalDateTime departureTime,
-    LocalDateTime arrivalTime,
-    Integer totalSeats,
-    Integer availableSeats,
-    BigDecimal ticketPrice,
-    Double discountPercentage
+public record ConnectingFlightDto(
+        FlightDto firstLeg,
+        FlightDto secondLeg
 ) implements BaseFlightDto {
     @Override
     public Long getId() {
-        return id;
+        return firstLeg.getId();
     }
 
     @Override
     public String getFlightNumber() {
-        return flightNumber;
+        return firstLeg.getFlightNumber();
     }
 
     @Override
     public RouteDto getRoute() {
-        return route;
+        return null;
     }
 
     @Override
     public AirlineDto getAirline() {
-        return airline;
+        return null;
     }
 
     @Override
     public LocalDateTime getDepartureTime() {
-        return departureTime;
+        return firstLeg.getDepartureTime();
     }
 
     @Override
     public LocalDateTime getArrivalTime() {
-        return arrivalTime;
+        return secondLeg.getArrivalTime();
     }
 
     @Override
     public Integer getTotalSeats() {
-        return totalSeats;
+        return firstLeg.getTotalSeats();
     }
 
     @Override
     public Integer getAvailableSeats() {
-        return availableSeats;
+        return firstLeg.getAvailableSeats();
     }
 
     @Override
     public BigDecimal getTicketPrice() {
-        return ticketPrice;
+        return firstLeg.getTicketPrice();
     }
 
     @Override
     public Double getDiscountPercentage() {
-        return discountPercentage;
+        return firstLeg.getDiscountPercentage();
     }
 }
+
