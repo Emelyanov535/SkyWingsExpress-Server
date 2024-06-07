@@ -28,7 +28,7 @@ public class FlightFilterController {
             @RequestParam String from,
             @RequestParam String to,
             @RequestParam String fromDate,
-            @RequestParam(required = false) String toDate) {
+            @RequestParam String toDate) {
         FlightsResponseDto flights = flightService.getFlightsByRouteAndDate(from, to, fromDate, toDate);
         return ResponseEntity.ok(flights);
     }
