@@ -2,8 +2,6 @@ package ru.swe.skywingsexpressserver.service;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.swe.skywingsexpressserver.dto.flight.BaseFlightDto;
-import ru.swe.skywingsexpressserver.dto.flight.ConnectingFlightDto;
 import ru.swe.skywingsexpressserver.dto.flight.FlightDto;
 import ru.swe.skywingsexpressserver.dto.flight.FlightsResponseDto;
 import ru.swe.skywingsexpressserver.model.operator.FlightModel;
@@ -13,8 +11,6 @@ import ru.swe.skywingsexpressserver.utils.DtoModelMapper;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -37,36 +33,15 @@ public class FlightFilterService {
         LocalDateTime startDateTime = LocalDate.parse(fromDate, formatter).atStartOfDay();
         LocalDateTime endDateTime = (toDate != null && !toDate.isEmpty())
                 ? LocalDate.parse(toDate, formatter).atTime(23, 59, 59)
-                : startDateTime.plusDays(1).minusSeconds(1);
+                : startDateTime.plusDays(1).minusSeconds(1); // если toDate не указана, ищем только по fromDate
 
-        // Поиск прямых рейсов
-        List<FlightModel> directFlights = flightRepository.findByRouteOriginAndRouteDestinationAndDepartureTimeBetween(from, to, startDateTime, endDateTime);
-        System.out.println("Direct Flights: " + directFlights);
-        List<BaseFlightDto> directFlightDtos = directFlights.stream()
-                .map(flight -> {
-                    FlightDto dto = mapper.transform(flight, FlightDto.class);
-                    System.out.println("Mapped Direct Flight: " + dto);
-                    return dto;
-                })
+        List<FlightModel> departureFlights = flightRepository.findByRouteOriginAndRouteDestinationAndDepartureTimeBetween(from, to, startDateTime, endDateTime);
+
+        List<FlightDto> departureFlightDtos = departureFlights.stream()
+                .map(flight -> mapper.transform(flight, FlightDto.class))
                 .collect(Collectors.toList());
 
-        // Поиск рейсов с пересадками
-        List<FlightModel> firstLegFlights = flightRepository.findByRouteOriginAndDepartureTimeBetween(from, startDateTime, endDateTime);
-        List<BaseFlightDto> connectingFlightDtos = firstLegFlights.stream()
-                .flatMap(firstLeg -> {
-                    LocalDateTime firstLegArrivalTime = firstLeg.getArrivalTime();
-                    List<FlightModel> secondLegFlights = flightRepository.findByRouteOriginAndRouteDestinationAndDepartureTimeBetween(
-                            firstLeg.getRoute().getDestination(), to, firstLegArrivalTime.plusHours(1), firstLegArrivalTime.plusHours(6)
-                    );
-                    return secondLegFlights.stream()
-                            .map(secondLeg -> new ConnectingFlightDto(
-                                    mapper.transform(firstLeg, FlightDto.class),
-                                    mapper.transform(secondLeg, FlightDto.class)
-                            ));
-                })
-                .collect(Collectors.toList());
-
-        List<BaseFlightDto> returnFlightDtos = null;
+        List<FlightDto> returnFlightDtos = null;
         if (toDate != null && !toDate.isEmpty()) {
             LocalDateTime returnStartDateTime = LocalDate.parse(toDate, formatter).atStartOfDay();
             LocalDateTime returnEndDateTime = returnStartDateTime.plusDays(1).minusSeconds(1);
@@ -77,7 +52,7 @@ public class FlightFilterService {
                     .collect(Collectors.toList());
         }
 
-        return new FlightsResponseDto(directFlightDtos, connectingFlightDtos, returnFlightDtos);
+        return new FlightsResponseDto(departureFlightDtos, returnFlightDtos);
     }
 
 //    public List<FlightDto> getFlightsSortedByPrice(String origin, String destination, LocalDateTime startDate) {
