@@ -12,6 +12,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -29,6 +30,7 @@ public class FlightFilterService {
     }
 
     public FlightsResponseDto getFlightsByRouteAndDate(String from, String to, String fromDate, String toDate) {
+        if (Objects.equals(toDate, "null")) { toDate = null; }
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDateTime startDateTime = LocalDate.parse(fromDate, formatter).atStartOfDay();
         LocalDateTime endDateTime = (toDate != null && !toDate.isEmpty())
