@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import ru.swe.skywingsexpressserver.dto.flight.FlightDto;
 import ru.swe.skywingsexpressserver.dto.flight.FlightsResponseDto;
 import ru.swe.skywingsexpressserver.model.operator.FlightModel;
 import ru.swe.skywingsexpressserver.service.FlightFilterService;
@@ -30,6 +31,12 @@ public class FlightFilterController {
             @RequestParam String fromDate,
             @RequestParam String toDate) {
         FlightsResponseDto flights = flightService.getFlightsByRouteAndDate(from, to, fromDate, toDate);
+        return ResponseEntity.ok(flights);
+    }
+
+    @GetMapping("/allflights")
+    public ResponseEntity<List<FlightDto>> getAllFlights(){
+        List<FlightDto> flights = flightService.getAllFlights();
         return ResponseEntity.ok(flights);
     }
 
