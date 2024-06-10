@@ -31,6 +31,16 @@ public class FlightFilterController {
         return ResponseEntity.ok(flights);
     }
 
+    @GetMapping("/connecting-flights")
+    public ResponseEntity<FlightsResponseDto> getConnectingFlights(
+            @RequestParam String from,
+            @RequestParam String to,
+            @RequestParam String fromDate,
+            @RequestParam String toDate) {
+        FlightsResponseDto flights = flightService.getConnectingFlights(from, to, fromDate, toDate);
+        return ResponseEntity.ok(flights);
+    }
+
     @GetMapping("/allflights")
     public ResponseEntity<List<FlightDto>> getAllFlights(){
         List<FlightDto> flights = flightService.getAllFlights();
