@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.swe.skywingsexpressserver.service.ModeratorService;
 
 @RestController
-@RequestMapping("/api/moderator/")
+@RequestMapping("/api/v1/moderator/")
 public class ModeratorController {
     private final ModeratorService moderatorService;
 

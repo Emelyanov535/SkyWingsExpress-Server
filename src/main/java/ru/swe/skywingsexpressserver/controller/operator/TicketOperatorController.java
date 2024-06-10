@@ -13,7 +13,7 @@ import ru.swe.skywingsexpressserver.service.TicketService;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/operator/tickets")
-public class TicketStatisticController {
+public class TicketOperatorController {
     private final TicketService ticketService;
 
     @GetMapping("/{id}")
