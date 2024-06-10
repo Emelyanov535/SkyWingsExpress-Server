@@ -1,15 +1,12 @@
 package ru.swe.skywingsexpressserver.model.survey.answer;
+
 import jakarta.persistence.CascadeType;
-import jakarta.persistence.DiscriminatorColumn;
-import jakarta.persistence.DiscriminatorType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
@@ -17,13 +14,11 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import ru.swe.skywingsexpressserver.model.survey.SubQuestionsModel;
 import ru.swe.skywingsexpressserver.model.survey.question.QuestionModel;
-import ru.swe.skywingsexpressserver.model.survey.question.QuestionType;
 
 import java.util.Date;
 import java.util.List;

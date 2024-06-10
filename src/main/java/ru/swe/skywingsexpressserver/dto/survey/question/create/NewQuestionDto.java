@@ -7,12 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import ru.swe.skywingsexpressserver.dto.survey.answer.create.NewAnswerDto;
-import ru.swe.skywingsexpressserver.dto.survey.answer.create.NewChoiceAnswerDto;
-import ru.swe.skywingsexpressserver.dto.survey.answer.create.NewDateAnswerDto;
-import ru.swe.skywingsexpressserver.dto.survey.answer.create.NewTextAnswerDto;
 import ru.swe.skywingsexpressserver.model.survey.question.QuestionType;
-
-import java.util.List;
 
 @Getter
 @Setter
