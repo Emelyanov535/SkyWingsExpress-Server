@@ -15,6 +15,7 @@ public record FlightDto(
     Integer totalSeats,
     Integer availableSeats,
     BigDecimal ticketPrice,
-    Double discountPercentage
+    Double discountPercentage,
+    Double priceChangePercentage
 ) {
 }

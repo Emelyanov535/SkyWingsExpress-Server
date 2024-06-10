@@ -3,6 +3,7 @@ package ru.swe.skywingsexpressserver.utils;
 import jakarta.persistence.Entity;
 import org.springframework.stereotype.Component;
 import ru.swe.skywingsexpressserver.dto.AirlineDto;
+import ru.swe.skywingsexpressserver.dto.flight.FlightDto;
 import ru.swe.skywingsexpressserver.dto.route.RouteDto;
 import ru.swe.skywingsexpressserver.model.AirlineModel;
 import ru.swe.skywingsexpressserver.model.operator.RouteModel;
@@ -15,6 +16,7 @@ import java.util.Optional;
 
 @Component
 public class DtoModelMapper {
+
     public <E, D> D transform(E entity, Class<D> dtoClass) {
         try {
             if (dtoClass.isRecord()) {
@@ -41,7 +43,6 @@ public class DtoModelMapper {
             sourceField.setAccessible(true);
             Object value = sourceField.get(source);
             if (isEntityField(sourceField)) {
-                // Если это вложенная сущность, рекурсивно мапим ее на соответствующий DTO
                 Class<?> nestedDtoClass = getDtoClassForEntity(sourceField.getType());
                 if (nestedDtoClass != null) {
                     Object nestedDto = transform(value, nestedDtoClass);
@@ -68,7 +69,6 @@ public class DtoModelMapper {
     }
 
     private Class<?> getDtoClassForEntity(Class<?> entityClass) {
-        // Возвращаем соответствующий класс DTO для заданного класса сущности
         if (entityClass.equals(AirlineModel.class)) {
             return AirlineDto.class;
         } else if (entityClass.equals(RouteModel.class)) {
@@ -76,7 +76,6 @@ public class DtoModelMapper {
         }
         return null;
     }
-
 
     private <E, D> void mapFields(E source, D destination) throws Exception {
         for (Field sourceField : source.getClass().getDeclaredFields()) {
@@ -111,7 +110,7 @@ public class DtoModelMapper {
                 temp.setAccessible(true);
                 temp.set(destination, idField.get(nestedEntity));
             } catch (NoSuchFieldException e) {
-                //
+                // No field found, skipping
             }
         }
     }

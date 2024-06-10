@@ -4,10 +4,14 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.swe.skywingsexpressserver.dto.flight.FlightDto;
 import ru.swe.skywingsexpressserver.dto.flight.FlightsResponseDto;
+import ru.swe.skywingsexpressserver.model.FlightPriceHistoryModel;
 import ru.swe.skywingsexpressserver.model.operator.FlightModel;
+import ru.swe.skywingsexpressserver.repository.FlightPriceHistoryRepository;
 import ru.swe.skywingsexpressserver.repository.operator.FlightRepository;
 import ru.swe.skywingsexpressserver.utils.DtoModelMapper;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -21,13 +25,18 @@ public class FlightFilterService {
 
     private final FlightRepository flightRepository;
     private final DtoModelMapper mapper;
+    private final FlightPriceHistoryRepository flightPriceHistoryRepository;
 
     public List<FlightDto> getAllFlights(){
         var flights = flightRepository.findAll();
         return flights.stream()
-                .map(flight -> mapper.transform(flight, FlightDto.class))
+                .map(flight -> {
+                    FlightDto flightDto = mapper.transform(flight, FlightDto.class);
+                    return addPriceChangePercentage(flightDto, flight.getId());
+                })
                 .collect(Collectors.toList());
     }
+
 
     public FlightsResponseDto getFlightsByRouteAndDate(String from, String to, String fromDate, String toDate) {
         if (Objects.equals(toDate, "null")) { toDate = null; }
@@ -57,6 +66,38 @@ public class FlightFilterService {
         return new FlightsResponseDto(departureFlightDtos, returnFlightDtos);
     }
 
+    private FlightDto addPriceChangePercentage(FlightDto flightDto, Long flightId) {
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime sevenDaysAgo = now.minusDays(7);
+        List<FlightPriceHistoryModel> priceHistory = flightPriceHistoryRepository.findByFlightIdAndDateBetween(flightId, sevenDaysAgo, now);
+
+        if (priceHistory.size() < 2) {
+            return flightDto;
+        }
+
+        BigDecimal oldPrice = priceHistory.get(0).getPrice();
+        BigDecimal newPrice = priceHistory.get(priceHistory.size() - 1).getPrice();
+
+        BigDecimal percentageChange = newPrice.subtract(oldPrice)
+                .divide(oldPrice, RoundingMode.HALF_UP)
+                .multiply(BigDecimal.valueOf(100));
+
+        return new FlightDto(
+                flightDto.id(),
+                flightDto.flightNumber(),
+                flightDto.route(),
+                flightDto.airline(),
+                flightDto.departureTime(),
+                flightDto.arrivalTime(),
+                flightDto.totalSeats(),
+                flightDto.availableSeats(),
+                flightDto.ticketPrice(),
+                flightDto.discountPercentage(),
+                percentageChange.doubleValue()
+        );
+    }
+}
+
 //    public List<FlightDto> getFlightsSortedByPrice(String origin, String destination, LocalDateTime startDate) {
 //        var flights = flightRepository.findByRouteOriginAndRouteDestinationAndDepartureTime(origin, destination, startDate);
 //        return flights.stream()
@@ -83,4 +124,3 @@ public class FlightFilterService {
 //
 //        return connectingFlights;
 //    }
-}
