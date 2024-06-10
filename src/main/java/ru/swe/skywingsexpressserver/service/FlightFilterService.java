@@ -49,7 +49,10 @@ public class FlightFilterService {
         List<FlightModel> departureFlights = flightRepository.findByRouteOriginAndRouteDestinationAndDepartureTimeBetween(from, to, startDateTime, endDateTime);
 
         List<FlightDto> departureFlightDtos = departureFlights.stream()
-                .map(flight -> mapper.transform(flight, FlightDto.class))
+                .map(flight -> {
+                    FlightDto flightDto = mapper.transform(flight, FlightDto.class);
+                    return addPriceChangePercentage(flightDto, flight.getId());
+                })
                 .collect(Collectors.toList());
 
         List<FlightDto> returnFlightDtos = null;
@@ -59,7 +62,10 @@ public class FlightFilterService {
 
             List<FlightModel> returnFlights = flightRepository.findByRouteOriginAndRouteDestinationAndDepartureTimeBetween(to, from, returnStartDateTime, returnEndDateTime);
             returnFlightDtos = returnFlights.stream()
-                    .map(flight -> mapper.transform(flight, FlightDto.class))
+                    .map(flight -> {
+                        FlightDto flightDto = mapper.transform(flight, FlightDto.class);
+                        return addPriceChangePercentage(flightDto, flight.getId());
+                    })
                     .collect(Collectors.toList());
         }
 
