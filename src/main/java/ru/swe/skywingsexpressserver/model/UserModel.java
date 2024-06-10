@@ -39,8 +39,6 @@ public class UserModel {
     @NotBlank(message = "Surname may not be null or empty!")
     private String surname;
     @Builder.Default
-    private Boolean sendNotifications = true;
-    @Builder.Default
     private Boolean twoFactor = false;
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(

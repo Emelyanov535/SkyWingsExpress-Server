@@ -10,8 +10,10 @@ import ru.swe.skywingsexpressserver.dto.flight.EditFlightCostDto;
 import ru.swe.skywingsexpressserver.dto.flight.EditFlightTimeDto;
 import ru.swe.skywingsexpressserver.dto.flight.FlightDto;
 import ru.swe.skywingsexpressserver.dto.flight.NewFlightDto;
+import ru.swe.skywingsexpressserver.model.FlightPriceHistoryModel;
 import ru.swe.skywingsexpressserver.model.TicketModel;
 import ru.swe.skywingsexpressserver.model.operator.FlightModel;
+import ru.swe.skywingsexpressserver.repository.FlightPriceHistoryRepository;
 import ru.swe.skywingsexpressserver.repository.TicketRepository;
 import ru.swe.skywingsexpressserver.repository.operator.FlightRepository;
 import ru.swe.skywingsexpressserver.utils.DtoModelMapper;
@@ -26,6 +28,7 @@ public class FlightService {
     private final TicketRepository ticketRepository;
     private final EntityFinderService entityFinderService;
     private final DtoModelMapper mapper;
+    private final FlightPriceHistoryRepository flightPriceHistoryRepository;
 
     @Transactional
     public void createFlight(NewFlightDto flightDto) {
@@ -36,6 +39,15 @@ public class FlightService {
         var savedFlight = flightRepository.save(flightModel);
         savedFlight.setFlightNumber(String.format("SWE%s", savedFlight.getId()));
         flightRepository.save(savedFlight);
+
+        // Сохранение начальной цены в историю
+        FlightPriceHistoryModel priceHistory = FlightPriceHistoryModel.builder()
+                .flight(savedFlight)
+                .date(LocalDateTime.now())
+                .price(flightDto.ticketPrice())
+                .build();
+        flightPriceHistoryRepository.save(priceHistory);
+
         createTicketsForFlight(savedFlight);
     }
 
@@ -58,17 +70,28 @@ public class FlightService {
     }
 
     @Transactional
-    public void editFlightCost(Long id,
-                               EditFlightCostDto data) {
+    public void editFlightCost(Long id, EditFlightCostDto data) {
         var flight = entityFinderService.getFlightModel(id);
+        boolean priceChanged = false;
+
         if (data.ticketPrice().intValue() >= 0) {
             flight.setTicketPrice(data.ticketPrice());
+            priceChanged = true;
         }
-        if (0 <= data.discountPercentage()
-            && data.discountPercentage() <= 100) {
+        if (0 <= data.discountPercentage() && data.discountPercentage() <= 100) {
             flight.setDiscountPercentage(data.discountPercentage());
         }
+
         flightRepository.save(flight);
+
+        if (priceChanged) {
+            FlightPriceHistoryModel priceHistory = FlightPriceHistoryModel.builder()
+                    .flight(flight)
+                    .date(LocalDateTime.now())
+                    .price(data.ticketPrice())
+                    .build();
+            flightPriceHistoryRepository.save(priceHistory);
+        }
     }
 
     @Transactional
