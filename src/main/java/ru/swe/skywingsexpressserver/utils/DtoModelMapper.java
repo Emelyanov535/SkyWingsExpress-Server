@@ -3,7 +3,6 @@ package ru.swe.skywingsexpressserver.utils;
 import jakarta.persistence.Entity;
 import org.springframework.stereotype.Component;
 import ru.swe.skywingsexpressserver.dto.AirlineDto;
-import ru.swe.skywingsexpressserver.dto.flight.FlightDto;
 import ru.swe.skywingsexpressserver.dto.route.RouteDto;
 import ru.swe.skywingsexpressserver.model.AirlineModel;
 import ru.swe.skywingsexpressserver.model.operator.RouteModel;

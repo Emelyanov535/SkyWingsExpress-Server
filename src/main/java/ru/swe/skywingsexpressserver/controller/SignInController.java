@@ -1,7 +1,10 @@
 package ru.swe.skywingsexpressserver.controller;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import ru.swe.skywingsexpressserver.dto.SignInDto;
 import ru.swe.skywingsexpressserver.dto.SignUpDto;
 import ru.swe.skywingsexpressserver.service.SignInService;

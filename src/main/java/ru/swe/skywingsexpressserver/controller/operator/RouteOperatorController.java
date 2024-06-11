@@ -19,7 +19,7 @@ import ru.swe.skywingsexpressserver.service.RouteService;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/operator/routes")
-public class RouteController {
+public class RouteOperatorController {
     private final RouteService routeService;
 
     @PostMapping

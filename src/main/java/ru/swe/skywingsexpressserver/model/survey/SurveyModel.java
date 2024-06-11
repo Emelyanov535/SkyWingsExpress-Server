@@ -8,13 +8,16 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import ru.swe.skywingsexpressserver.model.survey.question.QuestionModel;
 
 import java.util.List;
 
-@Data
+@Getter
+@Setter
 @Entity
 @Builder
 @NoArgsConstructor
@@ -24,6 +27,8 @@ public class SurveyModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private String title;
+    @ToString.Exclude
     @OneToMany(mappedBy="survey")
     private List<QuestionModel> questions;
 }

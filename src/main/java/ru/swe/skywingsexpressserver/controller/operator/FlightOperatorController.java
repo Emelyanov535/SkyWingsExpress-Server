@@ -20,7 +20,7 @@ import ru.swe.skywingsexpressserver.service.FlightService;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/operator/flights")
-public class FlightController {
+public class FlightOperatorController {
     private final FlightService flightService;
 
     @PostMapping

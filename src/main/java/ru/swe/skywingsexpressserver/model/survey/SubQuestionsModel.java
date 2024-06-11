@@ -17,8 +17,8 @@ import ru.swe.skywingsexpressserver.model.survey.question.QuestionModel;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name="t_choice")
-public class ChoiceModel {
+@Table(name="t_subquestion")
+public class SubQuestionsModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
