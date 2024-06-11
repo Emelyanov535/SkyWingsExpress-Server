@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.keycloak.representations.idm.CredentialRepresentation;
+import org.keycloak.representations.idm.authorization.AuthorizationResponse;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -62,6 +63,30 @@ public class SignInService {
         var response = restTemplate.postForEntity(
                 "http://localhost:8080/realms/swe_server/protocol/openid-connect/token",
                 new HttpEntity<>(requestBody, headers), String.class).getBody();
+        return jsonConverter.convertStringToClass(response, TokenDto.class);
+    }
+
+    @Transactional
+    public TokenDto authenticateWithGoogle(String token) {
+        // Создание HTTP-заголовков
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+        // Формирование запроса на обмен токена Google на токен Keycloak
+        MultiValueMap<String, String> requestBody = new LinkedMultiValueMap<>();
+        requestBody.add("grant_type", "urn:ietf:params:oauth:grant-type:token-exchange");
+        requestBody.add("subject_token_type", "urn:ietf:params:oauth:token-type:access_token");
+        requestBody.add("client_id", keycloakData.getClient());
+        requestBody.add("client_secret", keycloakData.getClientSecret());
+        requestBody.add("subject_token", token);
+        requestBody.add("subject_issuer", "google");
+
+        // Отправка запроса на обмен токена Google на токен Keycloak
+        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(requestBody, headers);
+        String response = restTemplate.postForObject(
+                "http://localhost:8080/realms/swe_server/protocol/openid-connect/token",
+                request, String.class);
+
         return jsonConverter.convertStringToClass(response, TokenDto.class);
     }
 }
