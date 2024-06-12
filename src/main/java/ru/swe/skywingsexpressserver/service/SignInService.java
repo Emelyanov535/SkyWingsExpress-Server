@@ -1,29 +1,32 @@
 package ru.swe.skywingsexpressserver.service;
 
+import com.auth0.jwt.JWT;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.keycloak.admin.client.Keycloak;
-import org.keycloak.representations.idm.UserRepresentation;
 import org.keycloak.representations.idm.CredentialRepresentation;
-import org.keycloak.representations.idm.authorization.AuthorizationResponse;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
+import org.keycloak.representations.idm.UserRepresentation;
+import org.springframework.http.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 import ru.swe.skywingsexpressserver.configuration.KeycloakData;
 import ru.swe.skywingsexpressserver.dto.SignInDto;
 import ru.swe.skywingsexpressserver.dto.SignUpDto;
 import ru.swe.skywingsexpressserver.dto.TokenDto;
+import ru.swe.skywingsexpressserver.dto.TwoFaDto;
 import ru.swe.skywingsexpressserver.model.UserModel;
 import ru.swe.skywingsexpressserver.repository.UserRepository;
 import ru.swe.skywingsexpressserver.utils.DtoModelMapper;
 import ru.swe.skywingsexpressserver.utils.JsonConverter;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @AllArgsConstructor
@@ -89,5 +92,60 @@ public class SignInService {
 
         return jsonConverter.convertStringToClass(response, TokenDto.class);
     }
+
+    @Transactional
+    public TwoFaDto generateTwoFactorAuthCode(String accessToken){
+        String userId = JWT.decode(accessToken).getSubject();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(accessToken);
+
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+
+        String url = UriComponentsBuilder.fromHttpUrl("http://localhost:8080/realms/swe_server/two-factor-auth/manage-2fa/{userId}/generate-2fa")
+                .buildAndExpand(userId)
+                .toUriString();
+
+        ResponseEntity<TwoFaDto> response = restTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                entity,
+                TwoFaDto.class
+        );
+        return response.getBody();
+    }
+
+    @Transactional
+    public TokenDto submitTwoFactorAuthCode(String accessToken, String code, String secret) {
+        String userId = JWT.decode(accessToken).getSubject();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(accessToken);
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        Map<String, Object> requestBody = new HashMap<>();
+        requestBody.put("deviceName", "Phone");
+        requestBody.put("totpInitialCode", code);
+        requestBody.put("encodedTotpSecret", secret);
+        requestBody.put("overwrite", true);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String jsonRequestBody;
+        try {
+            jsonRequestBody = objectMapper.writeValueAsString(requestBody);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to convert request body to JSON", e);
+        }
+
+        HttpEntity<String> entity = new HttpEntity<>(jsonRequestBody, headers);
+
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<String> response = restTemplate.postForEntity(
+                "http://localhost:8080/realms/swe_server/two-factor-auth/manage-2fa/" + userId + "/submit-2fa",
+                entity, String.class);
+
+        return jsonConverter.convertStringToClass(response.getBody(), TokenDto.class);
+    }
+
 }
 
