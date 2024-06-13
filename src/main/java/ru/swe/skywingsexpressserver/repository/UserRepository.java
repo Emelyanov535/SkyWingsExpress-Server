@@ -4,4 +4,5 @@ import ru.swe.skywingsexpressserver.model.UserModel;
 
 public interface UserRepository
     extends JpaRepository<UserModel, Long> {
+    UserModel getUserModelByEmail(String email);
 }

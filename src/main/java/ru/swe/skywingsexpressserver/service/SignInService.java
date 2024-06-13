@@ -8,17 +8,17 @@ import org.keycloak.admin.client.Keycloak;
 import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.http.*;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 import ru.swe.skywingsexpressserver.configuration.KeycloakData;
-import ru.swe.skywingsexpressserver.dto.SignInDto;
-import ru.swe.skywingsexpressserver.dto.SignUpDto;
-import ru.swe.skywingsexpressserver.dto.TokenDto;
-import ru.swe.skywingsexpressserver.dto.TwoFaDto;
+import ru.swe.skywingsexpressserver.dto.*;
 import ru.swe.skywingsexpressserver.model.UserModel;
 import ru.swe.skywingsexpressserver.repository.UserRepository;
 import ru.swe.skywingsexpressserver.utils.DtoModelMapper;
@@ -27,6 +27,7 @@ import ru.swe.skywingsexpressserver.utils.JsonConverter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 @Service
 @AllArgsConstructor
@@ -39,6 +40,14 @@ public class SignInService {
     private final RestTemplate restTemplate;
     private final JsonConverter jsonConverter;
 
+    public String getAccessToken() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication.getPrincipal() instanceof Jwt) {
+            Jwt jwt = (Jwt) authentication.getPrincipal();
+            return jwt.getTokenValue();
+        }
+        return null;
+    }
     @Transactional
     public void Registration(SignUpDto data){
         userRepository.save(mapper.transform(data, UserModel.class));
@@ -70,6 +79,29 @@ public class SignInService {
     }
 
     @Transactional
+    public TokenDto getTokenWithOtp(SignInWithOtp data){
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        MultiValueMap<String, String> requestBody = new LinkedMultiValueMap<>();
+        requestBody.add("grant_type", "password");
+        requestBody.add("client_id", keycloakData.getClient());
+        requestBody.add("client_secret", keycloakData.getClientSecret());
+        requestBody.add("username", data.email());
+        requestBody.add("password", data.password());
+        requestBody.add("otp", data.otp());
+        var response = restTemplate.postForEntity(
+                "http://localhost:8080/realms/swe_server/protocol/openid-connect/token",
+                new HttpEntity<>(requestBody, headers), String.class).getBody();
+        return jsonConverter.convertStringToClass(response, TokenDto.class);
+    }
+
+    @Transactional
+    public boolean checkUserOnTwoFactor(SignInDto data){
+        UserModel user = userRepository.getUserModelByEmail(data.email());
+        return user != null && Objects.equals(user.getPassword(), data.password()) && user.getTwoFactor();
+    }
+
+    @Transactional
     public TokenDto authenticateWithGoogle(String token) {
         // Создание HTTP-заголовков
         HttpHeaders headers = new HttpHeaders();
@@ -94,7 +126,8 @@ public class SignInService {
     }
 
     @Transactional
-    public TwoFaDto generateTwoFactorAuthCode(String accessToken){
+    public TwoFaDto generateTwoFactorAuthCode(){
+        String accessToken = getAccessToken();
         String userId = JWT.decode(accessToken).getSubject();
 
         HttpHeaders headers = new HttpHeaders();
@@ -116,8 +149,11 @@ public class SignInService {
     }
 
     @Transactional
-    public TokenDto submitTwoFactorAuthCode(String accessToken, String code, String secret) {
+    public void submitTwoFactorAuthCode(String code, String secret) {
+        String accessToken = getAccessToken();
         String userId = JWT.decode(accessToken).getSubject();
+        String email = JWT.decode(accessToken).getClaim("email").asString();
+        UserModel user = userRepository.getUserModelByEmail(email);
 
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(accessToken);
@@ -143,9 +179,10 @@ public class SignInService {
         ResponseEntity<String> response = restTemplate.postForEntity(
                 "http://localhost:8080/realms/swe_server/two-factor-auth/manage-2fa/" + userId + "/submit-2fa",
                 entity, String.class);
-
-        return jsonConverter.convertStringToClass(response.getBody(), TokenDto.class);
+        if(response.getStatusCode().value() == 204){
+            user.setTwoFactor(true);
+            userRepository.save(user);
+        }
     }
-
 }
 

@@ -30,7 +30,10 @@ public class SecurityConf {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(c -> c
-                        //.requestMatchers("/api/**").authenticated()
+                        .requestMatchers(
+                                "/api/v1/auth/generate2faCode",
+                                "/api/v1/auth/submit2faCode")
+                        .authenticated()
                         .anyRequest().permitAll()
                 )
                 .oauth2Login(oauth2 -> oauth2
