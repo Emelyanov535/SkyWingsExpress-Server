@@ -121,7 +121,7 @@ public class FlightFilterService {
 
         return new FlightsResponseDto(departureFlights, returnFlights);
     }
-}
+
     private FlightDto addPriceChangePercentage(FlightDto flightDto, Long flightId) {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime sevenDaysAgo = now.minusDays(7);
@@ -153,30 +153,3 @@ public class FlightFilterService {
         );
     }
 }
-
-//    public List<FlightDto> getFlightsSortedByPrice(String origin, String destination, LocalDateTime startDate) {
-//        var flights = flightRepository.findByRouteOriginAndRouteDestinationAndDepartureTime(origin, destination, startDate);
-//        return flights.stream()
-//                .map(flight -> mapper.transform(flight, FlightDto.class))
-//                .sorted(Comparator.comparing(FlightDto::ticketPrice))  // Добавлена сортировка по цене
-//                .collect(Collectors.toList());
-//    }
-//
-//    public List<List<FlightModel>> getConnectingFlights(String origin, String destination, LocalDateTime startDate, LocalDateTime endDate) {
-//        List<FlightModel> firstLegFlights = flightRepository.findByRouteOriginAndDepartureTimeBetween(origin, startDate, endDate);
-//        List<List<FlightModel>> connectingFlights = new ArrayList<>();
-//
-//        for (FlightModel firstLeg : firstLegFlights) {
-//            List<FlightModel> secondLegFlights = flightRepository.findByRouteOriginAndRouteDestinationAndDepartureTime(
-//                    firstLeg.getRoute().getDestination(), destination, firstLeg.getArrivalTime());
-//
-//            for (FlightModel secondLeg : secondLegFlights) {
-//                List<FlightModel> connection = new ArrayList<>();
-//                connection.add(firstLeg);
-//                connection.add(secondLeg);
-//                connectingFlights.add(connection);
-//            }
-//        }
-//
-//        return connectingFlights;
-//    }
