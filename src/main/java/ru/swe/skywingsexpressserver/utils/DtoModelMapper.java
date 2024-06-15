@@ -15,7 +15,6 @@ import java.util.Optional;
 
 @Component
 public class DtoModelMapper {
-
     public <E, D> D transform(E entity, Class<D> dtoClass) {
         try {
             if (dtoClass.isRecord()) {
@@ -42,6 +41,7 @@ public class DtoModelMapper {
             sourceField.setAccessible(true);
             Object value = sourceField.get(source);
             if (isEntityField(sourceField)) {
+                // Если это вложенная сущность, рекурсивно мапим ее на соответствующий DTO
                 Class<?> nestedDtoClass = getDtoClassForEntity(sourceField.getType());
                 if (nestedDtoClass != null) {
                     Object nestedDto = transform(value, nestedDtoClass);
@@ -68,6 +68,7 @@ public class DtoModelMapper {
     }
 
     private Class<?> getDtoClassForEntity(Class<?> entityClass) {
+        // Возвращаем соответствующий класс DTO для заданного класса сущности
         if (entityClass.equals(AirlineModel.class)) {
             return AirlineDto.class;
         } else if (entityClass.equals(RouteModel.class)) {
