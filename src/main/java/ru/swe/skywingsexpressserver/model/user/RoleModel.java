@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.swe.skywingsexpressserver.model.RoleEnum;
 
 @Data
 @Entity
