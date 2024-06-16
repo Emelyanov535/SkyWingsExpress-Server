@@ -41,4 +41,9 @@ public class BuyTicketController {
     public ResponseEntity<List<TicketDto>> getUserBuyTicket(){
         return ResponseEntity.ok(buyTicketService.getUserBuyTicket());
     }
+
+    @GetMapping("/checkin/{ticketNumber}")
+    public void checkIn(@PathVariable String ticketNumber) {
+        buyTicketService.checkIn(ticketNumber);
+    }
 }

@@ -10,4 +10,5 @@ public interface TicketRepository
     List<TicketModel> findByFlightId(Long flightId);
     List<TicketModel> findByOwnerIdAndIsBuyIsNull(Long ownerId);
     List<TicketModel> findByOwnerIdAndIsBuyIsTrue(Long ownerId);
+    List<TicketModel> findByOwnerIdAndIsCheckedInIsFalse(Long ownerId);
 }

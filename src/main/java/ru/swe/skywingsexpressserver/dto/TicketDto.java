@@ -8,6 +8,8 @@ public record TicketDto(
      String ticketNumber,
      FlightDto flight,
      Long ownerId,
-     BigDecimal finalPrice
+     BigDecimal finalPrice,
+     Boolean isBuy,
+     Boolean isCheckedIn
 ) {
 }

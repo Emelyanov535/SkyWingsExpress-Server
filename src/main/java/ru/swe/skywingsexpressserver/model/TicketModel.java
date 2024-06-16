@@ -29,4 +29,5 @@ public class TicketModel {
     private UserModel owner;
     private BigDecimal finalPrice;
     private Boolean isBuy;
+    private Boolean isCheckedIn;
 }

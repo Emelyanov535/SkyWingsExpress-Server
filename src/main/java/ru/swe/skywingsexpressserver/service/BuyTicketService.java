@@ -17,6 +17,7 @@ import ru.swe.skywingsexpressserver.repository.UserRepository;
 import ru.swe.skywingsexpressserver.repository.operator.FlightRepository;
 import ru.swe.skywingsexpressserver.utils.DtoModelMapper;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -89,5 +90,25 @@ public class BuyTicketService {
         return ticketRepository.findByOwnerIdAndIsBuyIsTrue(user.getId()).stream()
                 .map(entity -> mapper.transform(entity, TicketDto.class))
                 .toList();
+    }
+
+    @Transactional
+    public void checkIn(String ticketNumber) {
+        UserModel user = getUserFromContext();
+        TicketModel ticketModel = ticketRepository.getTicketByTicketNumber(ticketNumber);
+
+        if (ticketModel.getIsBuy() && !ticketModel.getIsCheckedIn()) {
+            FlightModel flight = ticketModel.getFlight();
+            LocalDateTime now = LocalDateTime.now();
+            LocalDateTime flightTime = flight.getDepartureTime();
+
+            if (now.isAfter(flightTime.minusHours(24))) {
+                ticketModel.setIsCheckedIn(true);
+            } else {
+                throw new IllegalStateException("Check-in is only allowed within 24 hours before the flight.");
+            }
+        } else {
+            throw new IllegalStateException("Ticket is either not bought or already checked in.");
+        }
     }
 }
