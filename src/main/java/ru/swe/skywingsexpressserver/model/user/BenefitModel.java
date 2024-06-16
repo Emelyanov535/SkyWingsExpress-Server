@@ -1,4 +1,4 @@
-package ru.swe.skywingsexpressserver.model;
+package ru.swe.skywingsexpressserver.model.user;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -11,12 +11,11 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name="t_airline")
-public class AirlineModel {
+@Table(name="t_benefit")
+public class BenefitModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String name;
-    private String code;
-    private String country;
+    @Enumerated(EnumType.STRING)
+    private BenefitEnum benefit;
 }

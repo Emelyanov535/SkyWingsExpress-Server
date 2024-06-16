@@ -1,4 +1,4 @@
-package ru.swe.skywingsexpressserver.model;
+package ru.swe.skywingsexpressserver.model.user;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -39,4 +39,7 @@ public class UserModel {
         inverseJoinColumns = @JoinColumn(name = "role_id")
     )
     private List<RoleModel> role;
+    @ManyToOne
+    @JoinColumn(name = "benefit_id")
+    private BenefitModel benefit;
 }

@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.swe.skywingsexpressserver.model.operator.FlightModel;
+import ru.swe.skywingsexpressserver.model.user.UserModel;
 
 import java.math.BigDecimal;
 
@@ -27,4 +28,5 @@ public class TicketModel {
     @JoinColumn(name="owner_id")
     private UserModel owner;
     private BigDecimal finalPrice;
+    private Boolean isBuy;
 }

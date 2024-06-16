@@ -1,4 +1,4 @@
-package ru.swe.skywingsexpressserver.model;
+package ru.swe.skywingsexpressserver.model.user;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

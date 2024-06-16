@@ -7,7 +7,7 @@ import ru.swe.skywingsexpressserver.dto.profile.ChangeProfileInformationDto;
 import ru.swe.skywingsexpressserver.dto.profile.EditAuthenticationMethod;
 import ru.swe.skywingsexpressserver.dto.profile.EditNotificationSettingsDto;
 import ru.swe.skywingsexpressserver.dto.profile.ProfileInformationDto;
-import ru.swe.skywingsexpressserver.model.UserModel;
+import ru.swe.skywingsexpressserver.model.user.UserModel;
 import ru.swe.skywingsexpressserver.repository.UserRepository;
 import ru.swe.skywingsexpressserver.utils.DtoModelMapper;
 

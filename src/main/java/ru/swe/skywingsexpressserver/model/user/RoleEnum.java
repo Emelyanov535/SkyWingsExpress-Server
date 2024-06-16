@@ -1,4 +1,4 @@
-package ru.swe.skywingsexpressserver.model;
+package ru.swe.skywingsexpressserver.model.user;
 
 public enum RoleEnum {
     USER("USER"),
