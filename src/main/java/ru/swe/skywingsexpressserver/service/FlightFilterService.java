@@ -142,7 +142,6 @@ public class FlightFilterService {
                 flightDto.id(),
                 flightDto.flightNumber(),
                 flightDto.route(),
-                flightDto.airline(),
                 flightDto.departureTime(),
                 flightDto.arrivalTime(),
                 flightDto.totalSeats(),

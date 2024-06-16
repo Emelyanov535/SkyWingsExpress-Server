@@ -19,7 +19,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 import ru.swe.skywingsexpressserver.configuration.KeycloakData;
 import ru.swe.skywingsexpressserver.dto.*;
-import ru.swe.skywingsexpressserver.model.UserModel;
+import ru.swe.skywingsexpressserver.model.user.UserModel;
 import ru.swe.skywingsexpressserver.repository.UserRepository;
 import ru.swe.skywingsexpressserver.utils.DtoModelMapper;
 import ru.swe.skywingsexpressserver.utils.JsonConverter;
@@ -28,6 +28,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+
+import static ru.swe.skywingsexpressserver.configuration.SecurityConf.getAccessToken;
 
 @Service
 @AllArgsConstructor
@@ -40,14 +42,7 @@ public class SignInService {
     private final RestTemplate restTemplate;
     private final JsonConverter jsonConverter;
 
-    public String getAccessToken() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication.getPrincipal() instanceof Jwt) {
-            Jwt jwt = (Jwt) authentication.getPrincipal();
-            return jwt.getTokenValue();
-        }
-        return null;
-    }
+
     @Transactional
     public void Registration(SignUpDto data){
         userRepository.save(mapper.transform(data, UserModel.class));

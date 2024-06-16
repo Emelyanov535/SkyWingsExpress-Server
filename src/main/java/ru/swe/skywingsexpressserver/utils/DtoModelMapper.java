@@ -2,9 +2,9 @@ package ru.swe.skywingsexpressserver.utils;
 
 import jakarta.persistence.Entity;
 import org.springframework.stereotype.Component;
-import ru.swe.skywingsexpressserver.dto.AirlineDto;
+import ru.swe.skywingsexpressserver.dto.flight.FlightDto;
 import ru.swe.skywingsexpressserver.dto.route.RouteDto;
-import ru.swe.skywingsexpressserver.model.AirlineModel;
+import ru.swe.skywingsexpressserver.model.operator.FlightModel;
 import ru.swe.skywingsexpressserver.model.operator.RouteModel;
 
 import java.lang.reflect.Constructor;
@@ -41,7 +41,6 @@ public class DtoModelMapper {
             sourceField.setAccessible(true);
             Object value = sourceField.get(source);
             if (isEntityField(sourceField)) {
-                // Если это вложенная сущность, рекурсивно мапим ее на соответствующий DTO
                 Class<?> nestedDtoClass = getDtoClassForEntity(sourceField.getType());
                 if (nestedDtoClass != null) {
                     Object nestedDto = transform(value, nestedDtoClass);
@@ -68,11 +67,11 @@ public class DtoModelMapper {
     }
 
     private Class<?> getDtoClassForEntity(Class<?> entityClass) {
-        // Возвращаем соответствующий класс DTO для заданного класса сущности
-        if (entityClass.equals(AirlineModel.class)) {
-            return AirlineDto.class;
-        } else if (entityClass.equals(RouteModel.class)) {
+        if (entityClass.equals(RouteModel.class)) {
             return RouteDto.class;
+        }
+        if (entityClass.equals(FlightModel.class)) {
+            return FlightDto.class;
         }
         return null;
     }
