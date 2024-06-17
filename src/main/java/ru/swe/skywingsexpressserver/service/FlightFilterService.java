@@ -2,6 +2,7 @@ package ru.swe.skywingsexpressserver.service;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import ru.swe.skywingsexpressserver.dto.flight.ConnectingFlightDto;
 import ru.swe.skywingsexpressserver.dto.flight.FlightDto;
 import ru.swe.skywingsexpressserver.dto.flight.FlightsResponseDto;
 import ru.swe.skywingsexpressserver.model.FlightPriceHistoryModel;
@@ -15,6 +16,8 @@ import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -36,7 +39,6 @@ public class FlightFilterService {
                 })
                 .collect(Collectors.toList());
     }
-
 
     public FlightsResponseDto getFlightsByRouteAndDate(String from, String to, String fromDate, String toDate) {
         if (Objects.equals(toDate, "null")) { toDate = null; }
@@ -72,6 +74,59 @@ public class FlightFilterService {
         return new FlightsResponseDto(departureFlightDtos, returnFlightDtos);
     }
 
+    public ConnectingFlightDto getConnectingFlights(String from, String to, String fromDate, String toDate) {
+        if (Objects.equals(toDate, "null")) { toDate = null; }
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDateTime startDateTime = LocalDate.parse(fromDate, formatter).atStartOfDay();
+        LocalDateTime endDateTime = (toDate != null && !toDate.isEmpty())
+                ? LocalDate.parse(toDate, formatter).atTime(23, 59, 59)
+                : startDateTime.plusDays(1).minusSeconds(1);
+
+        List<List<FlightDto>> departureFlights = new ArrayList<>();
+        List<List<FlightDto>> returnFlights = new ArrayList<>();
+
+        // Получаем все рейсы из точки A
+        List<FlightModel> initialFlights = flightRepository.findByRouteOriginAndDepartureTimeBetween(from, startDateTime, endDateTime);
+        for (FlightModel initialFlight : initialFlights) {
+            // Получаем возможные рейсы из точки пересадки в пункт назначения
+            List<FlightModel> connectingFlights = flightRepository.findByRouteOriginAndRouteDestinationAndDepartureTimeAfter(
+                    initialFlight.getRoute().getDestination(), to, initialFlight.getArrivalTime());
+
+            for (FlightModel connectingFlight : connectingFlights) {
+                List<FlightDto> departureFlight = new ArrayList<>();
+                departureFlight.add(mapper.transform(initialFlight, FlightDto.class));
+                departureFlight.add(mapper.transform(connectingFlight, FlightDto.class));
+                departureFlights.add(departureFlight);
+            }
+        }
+
+        // Если указана toDate, ищем обратные рейсы с пересадкой
+        if (toDate != null && !toDate.isEmpty()) {
+            LocalDateTime returnStartDateTime = LocalDate.parse(toDate, formatter).atStartOfDay();
+            LocalDateTime returnEndDateTime = returnStartDateTime.plusDays(1).minusSeconds(1);
+
+            List<FlightModel> initialReturnFlights = flightRepository.findByRouteOriginAndDepartureTimeBetween(to, returnStartDateTime, returnEndDateTime);
+            for (FlightModel initialReturnFlight : initialReturnFlights) {
+                // Получаем возможные рейсы из точки пересадки в пункт назначения
+                List<FlightModel> connectingReturnFlights = flightRepository.findByRouteOriginAndRouteDestinationAndDepartureTimeAfter(
+                        initialReturnFlight.getRoute().getDestination(), from, initialReturnFlight.getArrivalTime());
+
+                for (FlightModel connectingReturnFlight : connectingReturnFlights) {
+                    List<FlightDto> returnFlight = new ArrayList<>();
+                    returnFlight.add(mapper.transform(initialReturnFlight, FlightDto.class));
+                    returnFlight.add(mapper.transform(connectingReturnFlight, FlightDto.class));
+                    returnFlights.add(returnFlight);
+                }
+            }
+        }
+
+        // Сортируем списки рейсов по времени отправления
+        // departureFlights.sort(Comparator.comparing(FlightDto::departureTime));
+        // returnFlights.sort(Comparator.comparing(FlightDto::departureTime));
+
+        return new ConnectingFlightDto(departureFlights, returnFlights);
+    }
+
     private FlightDto addPriceChangePercentage(FlightDto flightDto, Long flightId) {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime sevenDaysAgo = now.minusDays(7);
@@ -102,30 +157,3 @@ public class FlightFilterService {
         );
     }
 }
-
-//    public List<FlightDto> getFlightsSortedByPrice(String origin, String destination, LocalDateTime startDate) {
-//        var flights = flightRepository.findByRouteOriginAndRouteDestinationAndDepartureTime(origin, destination, startDate);
-//        return flights.stream()
-//                .map(flight -> mapper.transform(flight, FlightDto.class))
-//                .sorted(Comparator.comparing(FlightDto::ticketPrice))  // Добавлена сортировка по цене
-//                .collect(Collectors.toList());
-//    }
-//
-//    public List<List<FlightModel>> getConnectingFlights(String origin, String destination, LocalDateTime startDate, LocalDateTime endDate) {
-//        List<FlightModel> firstLegFlights = flightRepository.findByRouteOriginAndDepartureTimeBetween(origin, startDate, endDate);
-//        List<List<FlightModel>> connectingFlights = new ArrayList<>();
-//
-//        for (FlightModel firstLeg : firstLegFlights) {
-//            List<FlightModel> secondLegFlights = flightRepository.findByRouteOriginAndRouteDestinationAndDepartureTime(
-//                    firstLeg.getRoute().getDestination(), destination, firstLeg.getArrivalTime());
-//
-//            for (FlightModel secondLeg : secondLegFlights) {
-//                List<FlightModel> connection = new ArrayList<>();
-//                connection.add(firstLeg);
-//                connection.add(secondLeg);
-//                connectingFlights.add(connection);
-//            }
-//        }
-//
-//        return connectingFlights;
-//    }

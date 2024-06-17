@@ -15,7 +15,6 @@ import java.util.Optional;
 
 @Component
 public class DtoModelMapper {
-
     public <E, D> D transform(E entity, Class<D> dtoClass) {
         try {
             if (dtoClass.isRecord()) {

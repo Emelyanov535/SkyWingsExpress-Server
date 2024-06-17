@@ -9,10 +9,13 @@ public interface FlightRepository
     extends JpaRepository<FlightModel, Long> {
 
     List<FlightModel> findByRouteOriginAndRouteDestinationAndDepartureTimeBetween(
-            String origin, String destination, LocalDateTime startDate, LocalDateTime endDate
-    );
+            String origin, String destination, LocalDateTime startDate, LocalDateTime endDate);
 
-    List<FlightModel> findByRouteOriginAndDepartureTimeBetween(String origin, LocalDateTime startDate, LocalDateTime endDate);
+    List<FlightModel> findByRouteOriginAndDepartureTimeBetween(
+            String origin, LocalDateTime startDate, LocalDateTime endDate);
+
+    List<FlightModel> findByRouteOriginAndRouteDestinationAndDepartureTimeAfter(
+            String routeOrigin, String routeDestination, LocalDateTime departureTime);
 
     List<FlightModel> findByRouteDestinationAndDepartureTimeBetween(String destination, LocalDateTime startDate, LocalDateTime endDate);
     List<FlightModel> findByOrderByTicketPriceAsc();

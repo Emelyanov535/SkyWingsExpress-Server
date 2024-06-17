@@ -29,8 +29,15 @@ spring:
             client-secret: ${KEYCLOAK_CLIENT_SECRET}
             scope: openid
           google:
-            client-id: 359809661776-d4fq32or2jevfoigrhgrc06458qkvkbp.apps.googleusercontent.com
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
             redirect-uri: http://localhost:8080/realms/swe_server/broker/google/endpoint
+            scope: openid, profile, email
+          github:
+            client-id: ${GITHUB_CLIENT_ID}
+            client-secret: ${GITHUB_CLIENT_SECRET}
+            redirect-uri: http://localhost:8080/realms/swe_server/broker/github/endpoint
+            scope: openid, profile, email
 
 keycloak:
   url: ${KEYCLOAK_URL}
