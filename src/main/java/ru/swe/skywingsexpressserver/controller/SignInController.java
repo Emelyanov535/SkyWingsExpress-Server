@@ -15,8 +15,7 @@ public class SignInController {
     }
     @PostMapping("/signUp")
     public ResponseEntity<Object> signUp(@RequestBody SignUpDto data){
-        signInService.Registration(data);
-        return ResponseEntity.ok("Пользователь успешно зарегистрирован!");
+        return ResponseEntity.ok(signInService.Registration(data));
     }
 
     @PostMapping("/signIn")
@@ -42,6 +41,6 @@ public class SignInController {
     @PostMapping("/submit2faCode")
     public ResponseEntity<Object> submitTwoAuthCode(@RequestBody responseFor2FA data){
         signInService.submitTwoFactorAuthCode(data.totpInitialCode(), data.encodedTotpSecret());
-        return ResponseEntity.ok("");
+        return ResponseEntity.ok("Двухфакторная авторизация добавлена!");
     }
 }
