@@ -2,6 +2,7 @@ package ru.swe.skywingsexpressserver.service;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import ru.swe.skywingsexpressserver.dto.flight.ConnectingFlightDto;
 import ru.swe.skywingsexpressserver.dto.flight.FlightDto;
 import ru.swe.skywingsexpressserver.dto.flight.FlightsResponseDto;
 import ru.swe.skywingsexpressserver.model.FlightPriceHistoryModel;
@@ -73,7 +74,7 @@ public class FlightFilterService {
         return new FlightsResponseDto(departureFlightDtos, returnFlightDtos);
     }
 
-    public FlightsResponseDto getConnectingFlights(String from, String to, String fromDate, String toDate) {
+    public ConnectingFlightDto getConnectingFlights(String from, String to, String fromDate, String toDate) {
         if (Objects.equals(toDate, "null")) { toDate = null; }
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDateTime startDateTime = LocalDate.parse(fromDate, formatter).atStartOfDay();
@@ -81,8 +82,8 @@ public class FlightFilterService {
                 ? LocalDate.parse(toDate, formatter).atTime(23, 59, 59)
                 : startDateTime.plusDays(1).minusSeconds(1);
 
-        List<FlightDto> departureFlights = new ArrayList<>();
-        List<FlightDto> returnFlights = new ArrayList<>();
+        List<List<FlightDto>> departureFlights = new ArrayList<>();
+        List<List<FlightDto>> returnFlights = new ArrayList<>();
 
         // Получаем все рейсы из точки A
         List<FlightModel> initialFlights = flightRepository.findByRouteOriginAndDepartureTimeBetween(from, startDateTime, endDateTime);
@@ -92,8 +93,10 @@ public class FlightFilterService {
                     initialFlight.getRoute().getDestination(), to, initialFlight.getArrivalTime());
 
             for (FlightModel connectingFlight : connectingFlights) {
-                departureFlights.add(mapper.transform(initialFlight, FlightDto.class));
-                departureFlights.add(mapper.transform(connectingFlight, FlightDto.class));
+                List<FlightDto> departureFlight = new ArrayList<>();
+                departureFlight.add(mapper.transform(initialFlight, FlightDto.class));
+                departureFlight.add(mapper.transform(connectingFlight, FlightDto.class));
+                departureFlights.add(departureFlight);
             }
         }
 
@@ -109,17 +112,19 @@ public class FlightFilterService {
                         initialReturnFlight.getRoute().getDestination(), from, initialReturnFlight.getArrivalTime());
 
                 for (FlightModel connectingReturnFlight : connectingReturnFlights) {
-                    returnFlights.add(mapper.transform(initialReturnFlight, FlightDto.class));
-                    returnFlights.add(mapper.transform(connectingReturnFlight, FlightDto.class));
+                    List<FlightDto> returnFlight = new ArrayList<>();
+                    returnFlight.add(mapper.transform(initialReturnFlight, FlightDto.class));
+                    returnFlight.add(mapper.transform(connectingReturnFlight, FlightDto.class));
+                    returnFlights.add(returnFlight);
                 }
             }
         }
 
         // Сортируем списки рейсов по времени отправления
-        departureFlights.sort(Comparator.comparing(FlightDto::departureTime));
-        returnFlights.sort(Comparator.comparing(FlightDto::departureTime));
+        // departureFlights.sort(Comparator.comparing(FlightDto::departureTime));
+        // returnFlights.sort(Comparator.comparing(FlightDto::departureTime));
 
-        return new FlightsResponseDto(departureFlights, returnFlights);
+        return new ConnectingFlightDto(departureFlights, returnFlights);
     }
 
     private FlightDto addPriceChangePercentage(FlightDto flightDto, Long flightId) {
