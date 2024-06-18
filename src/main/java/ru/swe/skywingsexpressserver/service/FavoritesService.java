@@ -43,6 +43,8 @@ public class FavoritesService {
         UserModel user = getUserFromContext();
         FlightModel flight = flightRepository.findById(flightId).get();
         List<FlightModel> newFavorites = user.getFavoriteFlights();
+        if (newFavorites.contains(flight))
+            return;
         newFavorites.add(flight);
         user.setFavoriteFlights(newFavorites);
         userRepository.save(user);
@@ -53,8 +55,18 @@ public class FavoritesService {
         UserModel user = getUserFromContext();
         FlightModel flight = flightRepository.findById(flightId).get();
         List<FlightModel> newFavorites = user.getFavoriteFlights();
+        if (!newFavorites.contains(flight))
+            return;
         newFavorites.remove(flight);
         user.setFavoriteFlights(newFavorites);
         userRepository.save(user);
+    }
+
+    @Transactional
+    public boolean checkFlightInFavorites(Long flightId){
+        UserModel user = getUserFromContext();
+        FlightModel flight = flightRepository.findById(flightId).get();
+        List<FlightModel> favorites = user.getFavoriteFlights();
+        return favorites.contains(flight);
     }
 }

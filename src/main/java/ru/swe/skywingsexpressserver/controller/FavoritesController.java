@@ -34,4 +34,11 @@ public class FavoritesController {
         favoritesService.removeFromUserFavorites(Long.parseLong(flightId));
         return ResponseEntity.ok("Полёт удалён из избранного!");
     }
+
+    @GetMapping("/check")
+    public ResponseEntity<Object> checkInFavorites(
+            @RequestParam String flightId
+    ){
+        return ResponseEntity.ok(favoritesService.checkFlightInFavorites(Long.parseLong(flightId)));
+    }
 }
