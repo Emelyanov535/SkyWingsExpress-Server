@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.swe.skywingsexpressserver.model.operator.FlightModel;
 import ru.swe.skywingsexpressserver.utils.ValidationRegex;
 
 import java.util.List;
@@ -42,4 +43,11 @@ public class UserModel {
     @ManyToOne
     @JoinColumn(name = "benefit_id")
     private BenefitModel benefit;
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "t_favorites",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "flight_id")
+    )
+    private List<FlightModel> favoriteFlights;
 }

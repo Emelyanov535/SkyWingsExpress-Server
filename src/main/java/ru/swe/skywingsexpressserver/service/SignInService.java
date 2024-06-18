@@ -44,7 +44,10 @@ public class SignInService {
 
 
     @Transactional
-    public void Registration(SignUpDto data){
+    public boolean Registration(SignUpDto data){
+        if (userRepository.getUserModelByEmail(data.email()) != null){
+            return false;
+        }
         userRepository.save(mapper.transform(data, UserModel.class));
         UserRepresentation userRepresentation = new UserRepresentation();
         userRepresentation.setEmail(data.email());
@@ -55,6 +58,7 @@ public class SignInService {
         userRepresentation.setCredentials(List.of(credentialRepresentation));
         userRepresentation.setEnabled(true);
         keycloak.realm(keycloakData.getRealm()).users().create(userRepresentation);
+        return true;
     }
 
     @Transactional
