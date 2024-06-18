@@ -49,7 +49,10 @@ public class SecurityConf {
                                 "/api/v1/auth/generate2faCode",
                                 "/api/v1/auth/submit2faCode",
                                 "/api/v1/buy",
-                                "/api/v1/buy/reservation"
+                                "/api/v1/buy/reservation",
+                                "/api/v1/favorites",
+                                "/api/v1/favorites/add",
+                                "/api/v1/favorites/remove"
                         )
                         .authenticated()
                         .anyRequest().permitAll()
