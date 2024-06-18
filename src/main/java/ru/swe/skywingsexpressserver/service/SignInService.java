@@ -24,11 +24,9 @@ import ru.swe.skywingsexpressserver.repository.UserRepository;
 import ru.swe.skywingsexpressserver.utils.DtoModelMapper;
 import ru.swe.skywingsexpressserver.utils.JsonConverter;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
+import static java.util.Collections.emptyList;
 import static ru.swe.skywingsexpressserver.configuration.SecurityConf.getAccessToken;
 
 @Service
@@ -48,7 +46,14 @@ public class SignInService {
         if (userRepository.getUserModelByEmail(data.email()) != null){
             return false;
         }
-        userRepository.save(mapper.transform(data, UserModel.class));
+        userRepository.save(
+                new UserModel(
+                    data.email(),
+                    passwordEncoder.encode(data.password()),
+                    data.name(),
+                    data.surname()
+                )
+        );
         UserRepresentation userRepresentation = new UserRepresentation();
         userRepresentation.setEmail(data.email());
         CredentialRepresentation credentialRepresentation = new CredentialRepresentation();
@@ -97,7 +102,7 @@ public class SignInService {
     @Transactional
     public boolean checkUserOnTwoFactor(SignInDto data){
         UserModel user = userRepository.getUserModelByEmail(data.email());
-        return user != null && Objects.equals(user.getPassword(), data.password()) && user.getTwoFactor();
+        return user != null && Objects.equals(user.getPassword(), passwordEncoder.encode(data.password())) && user.getTwoFactor();
     }
 
     @Transactional

@@ -50,4 +50,17 @@ public class UserModel {
             inverseJoinColumns = @JoinColumn(name = "flight_id")
     )
     private List<FlightModel> favoriteFlights;
+
+    public UserModel(
+            String email,
+            String password,
+            String name,
+            String surname
+    ){
+        this.email = email;
+        this.password = password;
+        this.name = name;
+        this.surname = surname;
+        this.twoFactor = false;
+    }
 }
