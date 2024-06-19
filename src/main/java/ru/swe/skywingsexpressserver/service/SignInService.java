@@ -98,9 +98,7 @@ public class SignInService {
     @Transactional
     public boolean checkUserOnTwoFactor(SignInDto data){
         UserModel user = userRepository.getUserModelByEmail(data.email());
-        var ckeck1 = passwordEncoder.encode(data.password());
-        var check = Objects.equals(user.getPassword(), passwordEncoder.encode(data.password()));
-        return user != null && Objects.equals(user.getPassword(), passwordEncoder.encode(data.password())) && user.getTwoFactor();
+        return user != null && passwordEncoder.matches(data.password(), user.getPassword()) && user.getTwoFactor();
     }
 
     @Transactional
