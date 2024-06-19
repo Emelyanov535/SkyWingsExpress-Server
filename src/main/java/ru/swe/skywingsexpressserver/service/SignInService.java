@@ -122,7 +122,20 @@ public class SignInService {
                 "http://localhost:8080/realms/swe_server/protocol/openid-connect/token",
                 request, String.class);
 
-        return jsonConverter.convertStringToClass(response, TokenDto.class);
+        var tokens = jsonConverter.convertStringToClass(response, TokenDto.class);
+        String email = JWT.decode(tokens.access_token()).getClaim("email").asString();
+
+        if (userRepository.getUserModelByEmail(email) == null){
+            var newUser = new UserModel(
+                email,
+                "google",
+                "google",
+                "google"
+            );
+            newUser.setTwoFactor(true);
+            userRepository.save(newUser);
+        }
+        return tokens;
     }
 
     @Transactional
