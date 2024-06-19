@@ -52,7 +52,8 @@ public class SecurityConf {
                                 "/api/v1/buy/reservation",
                                 "/api/v1/favorites",
                                 "/api/v1/favorites/add",
-                                "/api/v1/favorites/remove"
+                                "/api/v1/favorites/remove",
+                                "/api/v1/favorites/check"
                         )
                         .authenticated()
                         .anyRequest().permitAll()

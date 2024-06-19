@@ -8,10 +8,7 @@ import org.keycloak.admin.client.Keycloak;
 import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.http.*;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -26,7 +23,6 @@ import ru.swe.skywingsexpressserver.utils.JsonConverter;
 
 import java.util.*;
 
-import static java.util.Collections.emptyList;
 import static ru.swe.skywingsexpressserver.configuration.SecurityConf.getAccessToken;
 
 @Service
@@ -102,6 +98,8 @@ public class SignInService {
     @Transactional
     public boolean checkUserOnTwoFactor(SignInDto data){
         UserModel user = userRepository.getUserModelByEmail(data.email());
+        var ckeck1 = passwordEncoder.encode(data.password());
+        var check = Objects.equals(user.getPassword(), passwordEncoder.encode(data.password()));
         return user != null && Objects.equals(user.getPassword(), passwordEncoder.encode(data.password())) && user.getTwoFactor();
     }
 
