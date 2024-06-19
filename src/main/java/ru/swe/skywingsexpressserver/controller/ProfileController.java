@@ -16,30 +16,22 @@ public class ProfileController {
         this.profileService = profileService;
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Object> getProfile(@PathVariable Long id) {
-        var info = profileService.getProfileInformation(id);
+    @GetMapping
+    public ResponseEntity<Object> getProfile() {
+        var info = profileService.getProfileInformation();
         return ResponseEntity.ok(info);
     }
 
-    @PatchMapping("/{id}")
-    public ResponseEntity<Object> editProfile(@PathVariable Long id,
-                                              @RequestBody ChangeProfileInformationDto data) {
-        profileService.editProfileInformation(id, data);
+    @PatchMapping()
+    public ResponseEntity<Object> editProfile(@RequestBody ChangeProfileInformationDto data) {
+        profileService.editProfileInformation(data);
         return ResponseEntity.ok("Данные пользователя успешно изменены!");
     }
 
-    @PutMapping("/{id}/notification-settings")
+    @PatchMapping("/{id}/notification-settings")
     public ResponseEntity<Object> editNotificationSettings(@PathVariable Long id,
                                                            @RequestBody EditNotificationSettingsDto notificationSettings) {
         profileService.editNotificationSettings(id, notificationSettings);
         return ResponseEntity.ok("Настройки уведомлений успешно изменены!");
-    }
-
-    @PutMapping("/{id}/authentication-method")
-    public ResponseEntity<Object> editAuthenticationMethod(@PathVariable Long id,
-                                                           @RequestBody EditAuthenticationMethod authenticationMethod) {
-        profileService.editTwoFactor(id, authenticationMethod);
-        return ResponseEntity.ok("");
     }
 }

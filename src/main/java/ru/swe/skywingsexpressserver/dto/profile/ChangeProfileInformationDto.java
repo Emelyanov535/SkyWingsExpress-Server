@@ -4,7 +4,7 @@ public record ChangeProfileInformationDto(
     String name,
     String surname,
     String email,
-    String oldPassword,
-    String newPassword
+    String password,
+    boolean twoFactor
 ){
 }

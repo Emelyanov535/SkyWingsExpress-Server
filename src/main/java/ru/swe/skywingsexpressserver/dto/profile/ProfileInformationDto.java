@@ -4,6 +4,7 @@ public record ProfileInformationDto(
     Long id,
     String name,
     String surname,
-    String email
+    String email,
+    boolean twoFactor
 ) {
 }

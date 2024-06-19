@@ -27,5 +27,5 @@ import ru.swe.skywingsexpressserver.model.survey.question.QuestionType;
 public class NewQuestionDto {
     private String text;
     private QuestionType questionType;
-    private NewAnswerDto answer;
+    private NewAnswerDto correctAnswer;
 }

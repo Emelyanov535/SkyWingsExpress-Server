@@ -26,7 +26,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<ErrorResponse> handleIllegalArgumentException(Exception ex,
                                                                         HttpServletRequest request) {
-        return handleException(HttpStatus.NOT_FOUND, request, ex);
+        return handleException(HttpStatus.BAD_REQUEST, request, ex);
     }
 
     @ExceptionHandler(ConflictDataException.class)

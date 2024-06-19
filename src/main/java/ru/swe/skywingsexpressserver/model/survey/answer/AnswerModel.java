@@ -37,4 +37,5 @@ public class AnswerModel {
     // Для ответа в виде даты
     private Date startDate;
     private Date endDate;
+    private boolean isCorrect;
 }

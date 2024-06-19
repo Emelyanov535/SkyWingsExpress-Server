@@ -34,5 +34,5 @@ public class QuestionModel {
     @OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
     private List<SubQuestionsModel> subquestions;
     // Ссылка на изображение - IMAGE
-    private String imageUrl;
+    private byte[] imageUrl;
 }

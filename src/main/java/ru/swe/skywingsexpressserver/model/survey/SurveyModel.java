@@ -21,4 +21,5 @@ public class SurveyModel {
     @ToString.Exclude
     @OneToMany(mappedBy="survey")
     private List<QuestionModel> questions;
+    private boolean inArchive;
 }

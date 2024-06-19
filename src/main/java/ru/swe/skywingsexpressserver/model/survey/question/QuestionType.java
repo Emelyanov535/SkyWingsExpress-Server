@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 @JsonFormat(shape = JsonFormat.Shape.STRING)
 public enum QuestionType {
     TEXT,
-    MULTIPLE_CHOICE,
     TABLE,
     IMAGE
 }
