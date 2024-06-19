@@ -1,9 +1,9 @@
 package ru.swe.skywingsexpressserver.service;
 
 import com.auth0.jwt.JWT;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import jakarta.transaction.Transactional;
 import ru.swe.skywingsexpressserver.dto.flight.FlightDto;
 import ru.swe.skywingsexpressserver.model.operator.FlightModel;
 import ru.swe.skywingsexpressserver.model.user.UserModel;

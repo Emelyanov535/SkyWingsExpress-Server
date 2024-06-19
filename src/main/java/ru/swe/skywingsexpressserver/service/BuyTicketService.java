@@ -8,7 +8,6 @@ import ru.swe.skywingsexpressserver.dto.ReservationDto;
 import ru.swe.skywingsexpressserver.dto.Seat;
 import ru.swe.skywingsexpressserver.dto.SeatsOnFlight;
 import ru.swe.skywingsexpressserver.dto.TicketDto;
-import ru.swe.skywingsexpressserver.dto.flight.FlightDto;
 import ru.swe.skywingsexpressserver.model.TicketModel;
 import ru.swe.skywingsexpressserver.model.operator.FlightModel;
 import ru.swe.skywingsexpressserver.model.user.UserModel;
@@ -19,10 +18,7 @@ import ru.swe.skywingsexpressserver.utils.DtoModelMapper;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 import static ru.swe.skywingsexpressserver.configuration.SecurityConf.getAccessToken;
 

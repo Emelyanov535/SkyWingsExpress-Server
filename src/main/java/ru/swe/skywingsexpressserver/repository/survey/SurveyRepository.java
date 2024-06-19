@@ -1,11 +1,11 @@
 package ru.swe.skywingsexpressserver.repository.survey;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
-import ru.swe.skywingsexpressserver.dto.survey.SurveyDto;
 import ru.swe.skywingsexpressserver.model.survey.SurveyModel;
 
 public interface SurveyRepository

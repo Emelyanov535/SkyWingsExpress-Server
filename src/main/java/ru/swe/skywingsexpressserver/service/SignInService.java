@@ -7,7 +7,11 @@ import lombok.AllArgsConstructor;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
@@ -15,13 +19,19 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 import ru.swe.skywingsexpressserver.configuration.KeycloakData;
-import ru.swe.skywingsexpressserver.dto.*;
+import ru.swe.skywingsexpressserver.dto.SignInDto;
+import ru.swe.skywingsexpressserver.dto.SignInWithOtp;
+import ru.swe.skywingsexpressserver.dto.SignUpDto;
+import ru.swe.skywingsexpressserver.dto.TokenDto;
+import ru.swe.skywingsexpressserver.dto.TwoFaDto;
 import ru.swe.skywingsexpressserver.model.user.UserModel;
 import ru.swe.skywingsexpressserver.repository.UserRepository;
 import ru.swe.skywingsexpressserver.utils.DtoModelMapper;
 import ru.swe.skywingsexpressserver.utils.JsonConverter;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static ru.swe.skywingsexpressserver.configuration.SecurityConf.getAccessToken;
 

@@ -8,9 +8,12 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import ru.swe.skywingsexpressserver.dto.survey.SurveyPassedDto;
 import ru.swe.skywingsexpressserver.dto.survey.question.get.SurveyGetDto;
 import ru.swe.skywingsexpressserver.dto.survey.question.get.SurveyListItemDto;
 import ru.swe.skywingsexpressserver.service.SurveyService;
@@ -24,6 +27,12 @@ public class SurveyController {
     @GetMapping("/{id}")
     public ResponseEntity<SurveyGetDto> getSurvey(@PathVariable Long id) {
         return ResponseEntity.ok(surveyService.getSurvey(id));
+    }
+
+    @PostMapping
+    public ResponseEntity<String> passSurvey(@RequestBody SurveyPassedDto surveyPassedDto) {
+        surveyService.passSurvey(surveyPassedDto);
+        return ResponseEntity.ok("Опрос успещно пройден!");
     }
 
     @GetMapping

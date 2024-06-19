@@ -18,6 +18,7 @@ import ru.swe.skywingsexpressserver.repository.TicketRepository;
 import ru.swe.skywingsexpressserver.repository.operator.FlightRepository;
 import ru.swe.skywingsexpressserver.utils.DtoModelMapper;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.stream.Collectors;
 
@@ -33,7 +34,18 @@ public class FlightService {
     @Transactional
     public void createFlight(NewFlightDto flightDto) {
         var route = entityFinderService.getRouteModel(flightDto.routeId());
-        var flightModel = mapper.transform(flightDto, FlightModel.class);
+        var flightModel = FlightModel.builder()
+            .route(route)
+            .ticketPrice(
+                flightDto.ticketPrice().multiply(
+                    BigDecimal.ONE.subtract(BigDecimal.valueOf(
+                        flightDto.discountPercentage()).divide(new BigDecimal("100")))
+                ))
+            .totalSeats(flightDto.totalSeats())
+            .discountPercentage(flightDto.discountPercentage())
+            .arrivalTime(flightDto.arrivalTime())
+            .departureTime(flightDto.departureTime())
+            .build();
         flightModel.setRoute(route);
         flightModel.setAvailableSeats(flightDto.totalSeats());
         var savedFlight = flightRepository.save(flightModel);

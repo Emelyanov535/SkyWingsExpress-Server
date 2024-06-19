@@ -1,6 +1,5 @@
 package ru.swe.skywingsexpressserver.service;
 
-import jakarta.ws.rs.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

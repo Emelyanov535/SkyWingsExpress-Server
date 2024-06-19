@@ -55,11 +55,11 @@ public class RouteService {
         routeRepository.deleteById(id);
     }
 
-    public Page<RouteDto> getRoutes(int page, int size) {
-        Page<RouteModel> routesPage = routeRepository.findAll(PageRequest.of(page, size));
-        List<RouteDto> routeDtos = routesPage.getContent().stream()
+    public List<RouteDto> getRoutes() {
+        var routes = routeRepository.findAll();
+        return routes.stream()
             .map(entity -> mapper.transform(entity, RouteDto.class))
             .collect(Collectors.toList());
-        return new PageImpl<>(routeDtos, PageRequest.of(page, size), routesPage.getTotalElements());
+
     }
 }

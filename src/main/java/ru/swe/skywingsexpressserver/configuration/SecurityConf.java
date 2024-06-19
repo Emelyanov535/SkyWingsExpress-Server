@@ -1,8 +1,6 @@
 package ru.swe.skywingsexpressserver.configuration;
 
-import com.auth0.jwt.JWT;
 import lombok.AllArgsConstructor;
-import org.apache.catalina.User;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -20,7 +18,6 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
-import ru.swe.skywingsexpressserver.model.user.UserModel;
 import ru.swe.skywingsexpressserver.repository.UserRepository;
 
 import java.util.List;

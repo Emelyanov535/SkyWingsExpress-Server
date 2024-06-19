@@ -2,9 +2,13 @@ package ru.swe.skywingsexpressserver.controller;
 
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import ru.swe.skywingsexpressserver.dto.ReservationDto;
-import ru.swe.skywingsexpressserver.dto.Seat;
 import ru.swe.skywingsexpressserver.dto.SeatsOnFlight;
 import ru.swe.skywingsexpressserver.dto.TicketDto;
 import ru.swe.skywingsexpressserver.service.BuyTicketService;
