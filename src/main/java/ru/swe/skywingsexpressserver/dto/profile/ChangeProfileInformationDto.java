@@ -5,6 +5,8 @@ public record ChangeProfileInformationDto(
     String surname,
     String email,
     String password,
-    boolean twoFactor
+    boolean twoFactor,
+    boolean childMode,
+    String childModePassword
 ){
 }

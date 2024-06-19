@@ -9,15 +9,22 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.client.oidc.web.logout.OidcClientInitiatedLogoutSuccessHandler;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import ru.swe.skywingsexpressserver.model.user.UserModel;
 import ru.swe.skywingsexpressserver.repository.UserRepository;
+
+import java.util.List;
+import java.util.stream.Stream;
 
 @Configuration
 @AllArgsConstructor
@@ -53,8 +60,13 @@ public class SecurityConf {
                                 "/api/v1/favorites",
                                 "/api/v1/favorites/add",
                                 "/api/v1/favorites/remove"
-                        )
-                        .authenticated()
+                        ).authenticated()
+                        .requestMatchers(
+                            "/api/v1/operator/flights",
+                            "/api/v1/operator/routes",
+                            "/api/v1/operator/tickets"
+                        ).hasRole("OPERATOR")
+                        .requestMatchers("/api/v1/moderator/surveys").hasRole("MODERATOR")
                         .anyRequest().permitAll()
                 )
                 .oauth2Login(oauth2 -> oauth2
@@ -64,6 +76,26 @@ public class SecurityConf {
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))
                 .logout(logout -> logout.logoutSuccessHandler(oidcLogoutSuccessHandler()))
                 .build();
+    }
+
+    @Bean
+    public JwtAuthenticationConverter jwtAuthenticationConverter() {
+        var converter = new JwtAuthenticationConverter();
+        var jwtGrantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
+        converter.setPrincipalClaimName("preferred_username");
+        converter.setJwtGrantedAuthoritiesConverter(jwt -> {
+            var authorities = jwtGrantedAuthoritiesConverter.convert(jwt);
+            var roles = (List<String>) jwt.getClaimAsMap("realm_access").get("roles");
+
+            return Stream.concat(authorities.stream(),
+                    roles.stream()
+                        .filter(role -> role.startsWith("ROLE_"))
+                        .map(SimpleGrantedAuthority::new)
+                        .map(GrantedAuthority.class::cast))
+                .toList();
+        });
+
+        return converter;
     }
 
     @Bean

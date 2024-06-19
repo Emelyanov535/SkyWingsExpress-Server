@@ -33,6 +33,9 @@ public class UserModel {
     private String surname;
     @Builder.Default
     private Boolean twoFactor = false;
+    @Builder.Default
+    private Boolean childMode = false;
+    private String childModePassword;
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
         name = "t_user_role",
@@ -62,5 +65,6 @@ public class UserModel {
         this.name = name;
         this.surname = surname;
         this.twoFactor = false;
+        this.childMode = false;
     }
 }

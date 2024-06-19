@@ -4,6 +4,7 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.representations.idm.CredentialRepresentation;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.swe.skywingsexpressserver.configuration.KeycloakConf;
@@ -26,6 +27,7 @@ public class ProfileService {
     private final Keycloak keycloak;
     private final KeycloakConf keycloakConf;
     private final KeycloakData keycloakData;
+    private final BCryptPasswordEncoder passwordEncoder;
 
     public ProfileInformationDto getProfileInformation() {
         return mapper.transform(getUserFromContext(), ProfileInformationDto.class);
@@ -52,6 +54,7 @@ public class ProfileService {
             keycloak.realm(keycloakData.getRealm()).users().get(id).resetPassword(credential);
 
             keycloak.close();
+            user.setPassword(passwordEncoder.encode(data.password()));
         }
         if (!data.name().isBlank()) {
             user.setName(data.name());
@@ -63,6 +66,19 @@ public class ProfileService {
             user.setEmail(data.email());
         }
         user.setTwoFactor(data.twoFactor());
+
+        if (user.getChildMode() && !data.childMode()) {
+            if (data.childModePassword() == null
+                || !user.getChildModePassword().equals(data.childModePassword())) {
+                throw new IllegalArgumentException("Некорректный пароль для детского ребенка");
+            }
+            user.setChildModePassword("");
+        } else if (!user.getChildMode() && data.childMode()) {
+            if (data.childModePassword() == null)
+                throw new IllegalArgumentException("Некорректный пароль для детского ребенка");
+            user.setChildModePassword(data.childModePassword());
+        }
+        user.setChildMode(data.childMode());
         userRepository.save(user);
     }
 
