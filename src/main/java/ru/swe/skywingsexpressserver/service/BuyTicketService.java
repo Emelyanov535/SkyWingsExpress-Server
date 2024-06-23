@@ -25,7 +25,6 @@ import static ru.swe.skywingsexpressserver.configuration.SecurityConf.getAccessT
 @Service
 @AllArgsConstructor
 public class BuyTicketService {
-    private final FlightRepository flightRepository;
     private final TicketRepository ticketRepository;
     private final UserRepository userRepository;
     private final DtoModelMapper mapper;

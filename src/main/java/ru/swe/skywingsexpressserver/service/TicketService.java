@@ -25,6 +25,11 @@ public class TicketService {
         return mapper.transform(ticket, TicketDto.class);
     }
 
+    public Object getTicketByNumber(String ticketNumber) {
+        TicketModel ticket = ticketRepository.getTicketByTicketNumber(ticketNumber);
+        return mapper.transform(ticket, TicketDto.class);
+    }
+
     public Page<TicketDto> getTickets(int page, int size) {
         Page<TicketModel> ticketsPage = ticketRepository.findAll(PageRequest.of(page, size));
         List<TicketDto> ticketDtos = ticketsPage.getContent().stream()
