@@ -3,8 +3,10 @@ package ru.swe.skywingsexpressserver.service;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.swe.skywingsexpressserver.dto.flight.ConnectingFlightDto;
+import ru.swe.skywingsexpressserver.dto.flight.ExtendFlightDto;
 import ru.swe.skywingsexpressserver.dto.flight.FlightDto;
 import ru.swe.skywingsexpressserver.dto.flight.FlightsResponseDto;
+import ru.swe.skywingsexpressserver.dto.route.RouteDto;
 import ru.swe.skywingsexpressserver.model.FlightPriceHistoryModel;
 import ru.swe.skywingsexpressserver.model.operator.FlightModel;
 import ru.swe.skywingsexpressserver.repository.FlightPriceHistoryRepository;
@@ -81,8 +83,8 @@ public class FlightFilterService {
                 ? LocalDate.parse(toDate, formatter).atTime(23, 59, 59)
                 : startDateTime.plusDays(1).minusSeconds(1);
 
-        List<List<FlightDto>> departureFlights = new ArrayList<>();
-        List<List<FlightDto>> returnFlights = new ArrayList<>();
+        List<ExtendFlightDto> departureFlights = new ArrayList<>();
+        List<ExtendFlightDto> returnFlights = new ArrayList<>();
 
         // Получаем все рейсы из точки A
         List<FlightModel> initialFlights = flightRepository.findByRouteOriginAndDepartureTimeBetween(from, startDateTime, endDateTime);
@@ -92,10 +94,22 @@ public class FlightFilterService {
                     initialFlight.getRoute().getDestination(), to, initialFlight.getArrivalTime());
 
             for (FlightModel connectingFlight : connectingFlights) {
-                List<FlightDto> departureFlight = new ArrayList<>();
-                departureFlight.add(mapper.transform(initialFlight, FlightDto.class));
-                departureFlight.add(mapper.transform(connectingFlight, FlightDto.class));
-                departureFlights.add(departureFlight);
+                List<FlightDto> departureFlightIn = new ArrayList<>();
+                departureFlightIn.add(mapper.transform(initialFlight, FlightDto.class));
+                departureFlightIn.add(mapper.transform(connectingFlight, FlightDto.class));
+                RouteDto route = new RouteDto(
+                        null,
+                        initialFlight.getRoute().getOrigin(),
+                        connectingFlight.getRoute().getDestination(),
+                        initialFlight.getRoute().getDistance() + connectingFlight.getRoute().getDistance()
+                );
+                departureFlights.add(new ExtendFlightDto(
+                        route,
+                        initialFlight.getDepartureTime(),
+                        connectingFlight.getArrivalTime(),
+                        initialFlight.getTicketPrice().add(connectingFlight.getTicketPrice()),
+                        departureFlightIn
+                ));
             }
         }
 
@@ -111,17 +125,25 @@ public class FlightFilterService {
                         initialReturnFlight.getRoute().getDestination(), from, initialReturnFlight.getArrivalTime());
 
                 for (FlightModel connectingReturnFlight : connectingReturnFlights) {
-                    List<FlightDto> returnFlight = new ArrayList<>();
-                    returnFlight.add(mapper.transform(initialReturnFlight, FlightDto.class));
-                    returnFlight.add(mapper.transform(connectingReturnFlight, FlightDto.class));
-                    returnFlights.add(returnFlight);
+                    List<FlightDto> returnFlightIn = new ArrayList<>();
+                    returnFlightIn.add(mapper.transform(initialReturnFlight, FlightDto.class));
+                    returnFlightIn.add(mapper.transform(connectingReturnFlight, FlightDto.class));
+                    RouteDto route = new RouteDto(
+                            null,
+                            initialReturnFlight.getRoute().getOrigin(),
+                            connectingReturnFlight.getRoute().getDestination(),
+                            initialReturnFlight.getRoute().getDistance() + connectingReturnFlight.getRoute().getDistance()
+                    );
+                    returnFlights.add(new ExtendFlightDto(
+                            route,
+                            initialReturnFlight.getDepartureTime(),
+                            connectingReturnFlight.getArrivalTime(),
+                            initialReturnFlight.getTicketPrice().add(connectingReturnFlight.getTicketPrice()),
+                            returnFlightIn
+                    ));
                 }
             }
         }
-
-        // Сортируем списки рейсов по времени отправления
-        // departureFlights.sort(Comparator.comparing(FlightDto::departureTime));
-        // returnFlights.sort(Comparator.comparing(FlightDto::departureTime));
 
         return new ConnectingFlightDto(departureFlights, returnFlights);
     }
